@@ -19,12 +19,15 @@ export default {
       "@semantic-release/release-notes-generator",
       {
         preset: "conventionalcommits",
+        linkCompare: false,
       },
     ],
     [
       "@semantic-release/exec",
       {
-        prepareCmd: "UMBRE_VERSION=${nextRelease.version} bun run build && bun run package",
+        ...(isDryRun ? {} : { verifyConditionsCmd: "bun scripts/release/verify-marketplaces.ts" }),
+        prepareCmd:
+          "git tag -d v0.0.0 >/dev/null 2>&1 || true; UMBRE_VERSION=${nextRelease.version} bun run build && bun run package",
         publishCmd: "bun scripts/release/publish-marketplaces.ts",
       },
     ],
