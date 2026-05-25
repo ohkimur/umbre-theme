@@ -25,6 +25,8 @@ Umbre is published on:
 
 After installing, open **Preferences: Color Theme** and choose **Umbre Dark** or **Umbre Light**.
 
+Umbre pairs well with [Symbols](https://marketplace.visualstudio.com/items?itemName=miguelsolorio.symbols), a simple file icon theme that works in both VS Code and Cursor.
+
 ## Customize
 
 Run **Umbre: Configure Theme** from the Command Palette.

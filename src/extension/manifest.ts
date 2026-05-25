@@ -1,5 +1,5 @@
 import { commandContributions, type CommandContribution } from "@/extension/contributions.ts";
-import { commandIds } from "@/product.ts";
+import { commandIds, product } from "@/product.ts";
 import type { ThemeContribution } from "@/theme/types.ts";
 
 export type ExtensionPackageMetadata = {
@@ -27,6 +27,7 @@ type ExtensionManifest = {
   main: string;
   icon: string;
   activationEvents: string[];
+  extensionPack: string[];
   repository: {
     type: "git";
     url: string;
@@ -58,6 +59,7 @@ export const createExtensionManifest = (
   main: "./extension.js",
   icon: "assets/logo.png",
   activationEvents: [`onCommand:${commandIds.configure}`, "onStartupFinished"],
+  extensionPack: [product.recommendedExtensions.symbols.id],
   repository: packageMetadata.repository,
   files: ["extension.js", "assets/**", "themes/**", "README.md", "LICENSE", "package.json"],
   engines: {
