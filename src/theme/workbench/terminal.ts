@@ -1,12 +1,14 @@
 import type { ThemeModel } from "@/theme/model.ts";
-import { darken, lighten, tw, white } from "@/theme/palette.ts";
+import { darken, lighten, mix, tw, white } from "@/theme/palette.ts";
 import type { ColorMap } from "@/theme/types.ts";
 
-export const terminalColors = ({ accent, surfaces, uiSyntax: syntax }: ThemeModel): ColorMap => {
+export const terminalColors = ({ accent, surfaces, terminal, uiSyntax: syntax }: ThemeModel): ColorMap => {
   const lift = (hex: string): string => (surfaces.isDark ? lighten(hex, 0.12) : darken(hex, 0.08));
+  const depth = (terminal.level - 1) / 4;
+  const terminalBackground = mix(surfaces.editor, surfaces.raised, depth);
 
   return {
-    "terminal.background": surfaces.chrome3,
+    "terminal.background": terminalBackground,
     "terminal.foreground": surfaces.fg,
     "terminal.ansiBlack": surfaces.isDark ? tw("zinc", 900) : tw("zinc", 800),
     "terminal.ansiBrightBlack": surfaces.isDark ? tw("zinc", 600) : tw("zinc", 500),

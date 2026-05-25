@@ -1,5 +1,5 @@
 import type { ThemeModel } from "@/theme/model.ts";
-import { transparent } from "@/theme/palette.ts";
+import { transparent, withAlpha } from "@/theme/palette.ts";
 import type { ColorMap } from "@/theme/types.ts";
 import { baseColors } from "@/theme/workbench/base.ts";
 import {
@@ -57,15 +57,16 @@ export const workbenchColors = (model: ThemeModel): ColorMap => {
     ...symbolColors(model),
   };
 
-  return model.borders.enabled ? colors : withoutBorders(colors);
+  return withBorderIntensity(colors, model.borders.opacity);
 };
 
-const withoutBorders = (colors: ColorMap): ColorMap => {
+const withBorderIntensity = (colors: ColorMap, opacity: number): ColorMap => {
   return Object.fromEntries(
-    Object.entries(colors).map(([key, value]) => [
-      key,
-      isBorderColorKey(key) && !isWindowFrameBorderKey(key) ? transparent() : value,
-    ]),
+    Object.entries(colors).map(([key, value]) => {
+      if (!isBorderColorKey(key) || isWindowFrameBorderKey(key) || value === transparent())
+        return [key, value];
+      return [key, opacity === 0 ? transparent() : withAlpha(value, opacity)];
+    }),
   );
 };
 

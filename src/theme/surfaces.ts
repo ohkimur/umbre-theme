@@ -1,4 +1,4 @@
-import type { Mode, ShadeVariant } from "@/config.ts";
+import type { Mode, PanelVariant, ShadeVariant } from "@/config.ts";
 import type { Surfaces } from "@/theme/model-types.ts";
 import { black, mix, tw, white, withAlpha } from "@/theme/palette.ts";
 
@@ -7,14 +7,16 @@ type SurfaceLayers = Pick<
   "chrome0" | "chrome1" | "chrome2" | "chrome3" | "overlay" | "overlay2" | "raised"
 >;
 
-export const createSurfaces = (mode: Mode, shade: ShadeVariant): Surfaces => {
-  return mode === "dark" ? createDarkSurfaces(shade) : createLightSurfaces(shade);
+export const createSurfaces = (mode: Mode, shade: ShadeVariant, panels: PanelVariant): Surfaces => {
+  return mode === "dark" ? createDarkSurfaces(shade, panels) : createLightSurfaces(shade, panels);
 };
 
-const createDarkSurfaces = (shade: ShadeVariant): Surfaces => {
+const createDarkSurfaces = (shade: ShadeVariant, panels: PanelVariant): Surfaces => {
   const depth = shadeDepth(shade);
   const bg = shade.level === 5 ? black() : mix(tw("zinc", 900), tw("zinc", 950), 0.18 + depth * 0.72);
-  const layers = shade.level === 5 ? createPureBlackLayers(bg) : createDarkLayers(bg, depth);
+  const contrast = panelContrast(panels);
+  const layers =
+    shade.level === 5 ? createPureBlackLayers(bg, contrast) : createDarkLayers(bg, depth, contrast);
   const muted = tw("zinc", 500);
   const subtle = mix(tw("zinc", 600), bg, 0.2 + depth * 0.18);
 
@@ -37,27 +39,27 @@ const createDarkSurfaces = (shade: ShadeVariant): Surfaces => {
   };
 };
 
-const createDarkLayers = (bg: string, depth: number): SurfaceLayers => ({
-  chrome0: mix(bg, tw("zinc", 950), 0.24 + depth * 0.08),
-  chrome1: mix(bg, tw("zinc", 900), 0.12 + (1 - depth) * 0.08),
-  chrome2: mix(bg, tw("zinc", 900), 0.16 + (1 - depth) * 0.08),
-  chrome3: mix(bg, tw("zinc", 800), 0.1 + (1 - depth) * 0.04),
-  overlay: mix(bg, tw("zinc", 800), 0.18 + (1 - depth) * 0.04),
-  overlay2: mix(bg, tw("zinc", 700), 0.16 + (1 - depth) * 0.05),
-  raised: mix(bg, tw("zinc", 700), 0.22 + (1 - depth) * 0.06),
+const createDarkLayers = (bg: string, depth: number, contrast: number): SurfaceLayers => ({
+  chrome0: mix(bg, tw("zinc", 950), scaled(0.34 + depth * 0.12, contrast)),
+  chrome1: mix(bg, tw("zinc", 900), scaled(0.22 + (1 - depth) * 0.12, contrast)),
+  chrome2: mix(bg, tw("zinc", 900), scaled(0.3 + (1 - depth) * 0.12, contrast)),
+  chrome3: mix(bg, tw("zinc", 800), scaled(0.16 + (1 - depth) * 0.06, contrast)),
+  overlay: mix(bg, tw("zinc", 800), scaled(0.24 + (1 - depth) * 0.06, contrast)),
+  overlay2: mix(bg, tw("zinc", 700), scaled(0.2 + (1 - depth) * 0.06, contrast)),
+  raised: mix(bg, tw("zinc", 700), scaled(0.26 + (1 - depth) * 0.08, contrast)),
 });
 
-const createPureBlackLayers = (bg: string): SurfaceLayers => ({
-  chrome0: mix(bg, tw("zinc", 900), 0.36),
-  chrome1: mix(bg, tw("zinc", 900), 0.42),
-  chrome2: mix(bg, tw("zinc", 900), 0.46),
-  chrome3: mix(bg, tw("zinc", 800), 0.38),
-  overlay: mix(bg, tw("zinc", 800), 0.5),
-  overlay2: mix(bg, tw("zinc", 700), 0.5),
-  raised: mix(bg, tw("zinc", 700), 0.62),
+const createPureBlackLayers = (bg: string, contrast: number): SurfaceLayers => ({
+  chrome0: mix(bg, tw("zinc", 900), scaled(0.64, contrast)),
+  chrome1: mix(bg, tw("zinc", 900), scaled(0.74, contrast)),
+  chrome2: mix(bg, tw("zinc", 900), scaled(0.78, contrast)),
+  chrome3: mix(bg, tw("zinc", 800), scaled(0.66, contrast)),
+  overlay: mix(bg, tw("zinc", 800), scaled(0.66, contrast)),
+  overlay2: mix(bg, tw("zinc", 700), scaled(0.58, contrast)),
+  raised: mix(bg, tw("zinc", 700), scaled(0.62, contrast)),
 });
 
-const createLightSurfaces = (shade: ShadeVariant): Surfaces => {
+const createLightSurfaces = (shade: ShadeVariant, panels: PanelVariant): Surfaces => {
   const depth = shadeDepth(shade);
   const bg = mix(white(), tw("zinc", 200), depth);
   const muted = tw("zinc", 600);
@@ -66,7 +68,7 @@ const createLightSurfaces = (shade: ShadeVariant): Surfaces => {
   return {
     bg,
     editor: bg,
-    ...createLightLayers(bg, depth),
+    ...createLightLayers(bg, depth, panelContrast(panels)),
     line: withAlpha(mix(tw("zinc", 300), tw("zinc", 500), depth * 0.36), 0.44),
     lineStrong: withAlpha(mix(tw("zinc", 400), tw("zinc", 600), depth * 0.34), 0.54),
     fg: tw("zinc", 950),
@@ -82,16 +84,24 @@ const createLightSurfaces = (shade: ShadeVariant): Surfaces => {
   };
 };
 
-const createLightLayers = (bg: string, depth: number): SurfaceLayers => ({
-  chrome0: mix(bg, tw("zinc", 300), 0.08 + depth * 0.07),
-  chrome1: mix(bg, tw("zinc", 300), 0.05 + depth * 0.05),
-  chrome2: mix(bg, tw("zinc", 300), 0.08 + depth * 0.07),
-  chrome3: mix(bg, tw("zinc", 300), 0.1 + depth * 0.08),
-  overlay: mix(bg, white(), 0.82 - depth * 0.22),
-  overlay2: mix(bg, tw("zinc", 300), 0.08 + depth * 0.08),
-  raised: mix(mix(bg, white(), 0.82 - depth * 0.22), tw("zinc", 300), 0.24 + depth * 0.1),
+const createLightLayers = (bg: string, depth: number, contrast: number): SurfaceLayers => ({
+  chrome0: mix(bg, tw("zinc", 300), scaled(0.12 + depth * 0.1, contrast)),
+  chrome1: mix(bg, tw("zinc", 300), scaled(0.08 + depth * 0.08, contrast)),
+  chrome2: mix(bg, tw("zinc", 300), scaled(0.12 + depth * 0.1, contrast)),
+  chrome3: mix(bg, tw("zinc", 300), scaled(0.16 + depth * 0.12, contrast)),
+  overlay: mix(bg, white(), scaled(0.82 - depth * 0.22, contrast)),
+  overlay2: mix(bg, tw("zinc", 300), scaled(0.1 + depth * 0.12, contrast)),
+  raised: mix(
+    mix(bg, white(), scaled(0.82 - depth * 0.22, contrast)),
+    tw("zinc", 300),
+    scaled(0.24 + depth * 0.1, contrast),
+  ),
 });
 
 const createDeemphasized = (muted: string, subtle: string): string => mix(muted, subtle, 0.58);
+
+const panelContrast = (panels: PanelVariant): number => 0.45 + ((panels.level - 1) / 4) * 0.75;
+
+const scaled = (amount: number, contrast: number): number => amount * contrast;
 
 const shadeDepth = (shade: ShadeVariant): number => (shade.level - 1) / 4;

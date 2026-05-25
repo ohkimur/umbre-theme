@@ -4,12 +4,16 @@ import {
   defaultShadeForMode,
   dimVariants,
   modes,
+  panelVariants,
   shadeVariants,
+  terminalVariants,
   type AccentFamily,
   type BorderVariant,
   type DimVariant,
   type Mode,
+  type PanelVariant,
   type ShadeVariant,
+  type TerminalVariant,
 } from "@/config.ts";
 import type { UmbraSettings } from "@/runtime/settings.ts";
 import { titleCase } from "@/utils/text.ts";
@@ -21,7 +25,15 @@ type PickItem<Value> = vscode.QuickPickItem & {
   current?: boolean;
 };
 
-type ConfigurationTarget = "mode" | "shade" | "accent" | "dimming" | "borders" | "all";
+type ConfigurationTarget =
+  | "all"
+  | "mode"
+  | "shade"
+  | "accent"
+  | "dimming"
+  | "panels"
+  | "terminal"
+  | "borders";
 type PreviewSettings = (settings: UmbraSettings) => void;
 
 export const pickSettings = async (
@@ -39,6 +51,12 @@ const pickConfigurationTarget = async (current: UmbraSettings): Promise<Configur
   return pickValue(
     [
       {
+        label: "Configure all",
+        description: "Guided setup",
+        detail: "Step through all Umbra theme controls.",
+        value: "all",
+      },
+      {
         label: "Mode",
         description: titleCase(current.mode),
         detail: "Switch between Umbra Dark and Umbra Light.",
@@ -47,13 +65,13 @@ const pickConfigurationTarget = async (current: UmbraSettings): Promise<Configur
       {
         label: "Surface shade",
         description: `Level ${current.shade.level}: ${shadeLabel(current.mode, current.shade)}`,
-        detail: "Adjust the base darkness/lightness for the editor and UI chrome.",
+        detail: "Set the editor base darkness/lightness.",
         value: "shade",
       },
       {
         label: "Accent color",
         description: titleCase(current.accent),
-        detail: "Change the command, cursor, focus, badge, and active-state accent.",
+        detail: "Change command, cursor, focus, badge, and active states.",
         value: "accent",
       },
       {
@@ -63,16 +81,22 @@ const pickConfigurationTarget = async (current: UmbraSettings): Promise<Configur
         value: "dimming",
       },
       {
-        label: "Borders",
-        description: current.borders.label,
-        detail: "Show or hide subtle outlines between workbench areas.",
-        value: "borders",
+        label: "Panel contrast",
+        description: `Level ${current.panels.level}`,
+        detail: "Tune sidebar, panel, tabs, and widget contrast against the editor.",
+        value: "panels",
       },
       {
-        label: "Configure all",
-        description: "Guided setup",
-        detail: "Step through mode, shade, accent, editor dimming, and borders.",
-        value: "all",
+        label: "Terminal contrast",
+        description: `Level ${current.terminal.level}`,
+        detail: "Tune terminal background contrast independently.",
+        value: "terminal",
+      },
+      {
+        label: "Border intensity",
+        description: `Level ${current.borders.level}`,
+        detail: "Tune outlines between workbench areas.",
+        value: "borders",
       },
     ],
     "Umbra: what would you like to configure?",
@@ -101,6 +125,14 @@ const pickSingleSetting = async (
       const dim = await pickDimming(current, previewSettings);
       return dim ? { ...current, dim } : undefined;
     }
+    case "panels": {
+      const panels = await pickPanels(current, previewSettings);
+      return panels ? { ...current, panels } : undefined;
+    }
+    case "terminal": {
+      const terminal = await pickTerminal(current, previewSettings);
+      return terminal ? { ...current, terminal } : undefined;
+    }
     case "borders": {
       const borders = await pickBorders(current, previewSettings);
       return borders ? { ...current, borders } : undefined;
@@ -128,10 +160,18 @@ const pickAllSettings = async (
   if (!dim) return undefined;
   const withDimming = { ...withAccent, dim };
 
-  const borders = await pickBorders(withDimming, previewSettings);
+  const panels = await pickPanels(withDimming, previewSettings);
+  if (!panels) return undefined;
+  const withPanels = { ...withDimming, panels };
+
+  const terminal = await pickTerminal(withPanels, previewSettings);
+  if (!terminal) return undefined;
+  const withTerminal = { ...withPanels, terminal };
+
+  const borders = await pickBorders(withTerminal, previewSettings);
   if (!borders) return undefined;
 
-  return { ...withDimming, borders };
+  return { ...withTerminal, borders };
 };
 
 const pickMode = async (
@@ -205,18 +245,52 @@ const pickDimming = async (
   );
 };
 
+const pickPanels = async (
+  current: UmbraSettings,
+  previewSettings?: PreviewSettings,
+): Promise<PanelVariant | undefined> => {
+  return pickValue(
+    panelVariants.map((panels) => ({
+      label: itemLabel(`Level ${panels.level}`, current.panels.id === panels.id),
+      detail: levelSlider(panels.level),
+      value: panels,
+      current: current.panels.id === panels.id,
+    })),
+    "Umbra: select panel contrast",
+    (panels) => ({ ...current, panels }),
+    previewSettings,
+  );
+};
+
+const pickTerminal = async (
+  current: UmbraSettings,
+  previewSettings?: PreviewSettings,
+): Promise<TerminalVariant | undefined> => {
+  return pickValue(
+    terminalVariants.map((terminal) => ({
+      label: itemLabel(`Level ${terminal.level}`, current.terminal.id === terminal.id),
+      detail: levelSlider(terminal.level),
+      value: terminal,
+      current: current.terminal.id === terminal.id,
+    })),
+    "Umbra: select terminal contrast",
+    (terminal) => ({ ...current, terminal }),
+    previewSettings,
+  );
+};
+
 const pickBorders = async (
   current: UmbraSettings,
   previewSettings?: PreviewSettings,
 ): Promise<BorderVariant | undefined> => {
   return pickValue(
     borderVariants.map((borders) => ({
-      label: itemLabel(borders.label, current.borders.id === borders.id),
-      description: borders.description,
+      label: itemLabel(`Level ${borders.level}`, current.borders.id === borders.id),
+      detail: levelSlider(borders.level),
       value: borders,
       current: current.borders.id === borders.id,
     })),
-    "Umbra: select borders",
+    "Umbra: select border intensity",
     (borders) => ({ ...current, borders }),
     previewSettings,
   );

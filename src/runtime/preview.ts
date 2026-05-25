@@ -92,5 +92,7 @@ const previewKey = (snapshot: PreviewSnapshot, settings: UmbraSettings): string 
     settings.shade.id,
     settings.accent,
     settings.dim.id,
+    settings.panels.id,
+    settings.terminal.id,
     settings.borders.id,
   ].join(":");

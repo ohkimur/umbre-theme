@@ -4,7 +4,9 @@ import {
   type BorderVariant,
   type DimVariant,
   type Mode,
+  type PanelVariant,
   type ShadeVariant,
+  type TerminalVariant,
 } from "@/config.ts";
 import { createAccent } from "@/theme/accent.ts";
 import type { ThemeModel } from "@/theme/model-types.ts";
@@ -18,6 +20,8 @@ export type ThemeModelInput = {
   shade: ShadeVariant;
   accentFamily: AccentFamily;
   dim: DimVariant;
+  panels: PanelVariant;
+  terminal: TerminalVariant;
   borders: BorderVariant;
 };
 
@@ -26,9 +30,11 @@ export const createThemeModel = ({
   shade,
   accentFamily,
   dim,
+  panels,
+  terminal,
   borders,
 }: ThemeModelInput): ThemeModel => {
-  const surfaces = createSurfaces(mode, shade);
+  const surfaces = createSurfaces(mode, shade, panels);
   const syntax = createSyntax(mode, accentFamily, dim, surfaces);
 
   return {
@@ -36,6 +42,8 @@ export const createThemeModel = ({
     shade,
     accentFamily,
     dim,
+    panels,
+    terminal,
     borders,
     accent: createAccent(mode, accentFamily),
     surfaces,

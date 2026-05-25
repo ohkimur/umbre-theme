@@ -93,18 +93,79 @@ export const dimVariants = [
 ] as const;
 export type DimVariant = (typeof dimVariants)[number];
 
-export const borderVariants = [
+export const panelVariants = [
   {
-    id: "on",
-    label: "Borders",
-    description: "Keep subtle UI borders visible.",
-    enabled: true,
+    id: "1",
+    level: 1,
   },
   {
-    id: "off",
-    label: "No borders",
-    description: "Hide UI borders and outlines.",
-    enabled: false,
+    id: "2",
+    level: 2,
+  },
+  {
+    id: "3",
+    level: 3,
+  },
+  {
+    id: "4",
+    level: 4,
+  },
+  {
+    id: "5",
+    level: 5,
+  },
+] as const;
+export type PanelVariant = (typeof panelVariants)[number];
+
+export const terminalVariants = [
+  {
+    id: "1",
+    level: 1,
+  },
+  {
+    id: "2",
+    level: 2,
+  },
+  {
+    id: "3",
+    level: 3,
+  },
+  {
+    id: "4",
+    level: 4,
+  },
+  {
+    id: "5",
+    level: 5,
+  },
+] as const;
+export type TerminalVariant = (typeof terminalVariants)[number];
+
+export const borderVariants = [
+  {
+    id: "1",
+    level: 1,
+    opacity: 0,
+  },
+  {
+    id: "2",
+    level: 2,
+    opacity: 0.24,
+  },
+  {
+    id: "3",
+    level: 3,
+    opacity: 0.42,
+  },
+  {
+    id: "4",
+    level: 4,
+    opacity: 0.62,
+  },
+  {
+    id: "5",
+    level: 5,
+    opacity: 0.82,
   },
 ] as const;
 export type BorderVariant = (typeof borderVariants)[number];
@@ -114,8 +175,10 @@ export const defaultDarkShade = shadeVariants[2];
 export const defaultLightShade = shadeVariants[0];
 export const defaultShade = defaultDarkShade;
 export const defaultAccent = "amber" satisfies AccentFamily;
-export const defaultDimming = dimVariants[0];
-export const defaultBorders = borderVariants[0];
+export const defaultDimming = dimVariants[1];
+export const defaultPanels = panelVariants[3];
+export const defaultTerminal = terminalVariants[3];
+export const defaultBorders = borderVariants[2];
 export const defaultShadeForMode = (mode: Mode): ShadeVariant => {
   return mode === "dark" ? defaultDarkShade : defaultLightShade;
 };

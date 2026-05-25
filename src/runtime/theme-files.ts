@@ -35,6 +35,8 @@ const encodeTheme = (settings: UmbraSettings): Uint8Array => {
     shade: settings.shade,
     accent: settings.accent,
     dim: settings.dim,
+    panels: settings.panels,
+    terminal: settings.terminal,
     borders: settings.borders,
   });
 

@@ -1,5 +1,20 @@
-import type { AccentFamily, BorderVariant, DimVariant, Mode, ShadeVariant } from "@/config.ts";
-import { defaultAccent, defaultBorders, defaultDimming, defaultShadeForMode } from "@/config.ts";
+import type {
+  AccentFamily,
+  BorderVariant,
+  DimVariant,
+  Mode,
+  PanelVariant,
+  ShadeVariant,
+  TerminalVariant,
+} from "@/config.ts";
+import {
+  defaultAccent,
+  defaultBorders,
+  defaultDimming,
+  defaultPanels,
+  defaultShadeForMode,
+  defaultTerminal,
+} from "@/config.ts";
 import { createThemeModel } from "@/theme/model.ts";
 import { themeFileName, themeLabel } from "@/theme/naming.ts";
 import { semanticTokenColors } from "@/theme/semantic.ts";
@@ -12,6 +27,8 @@ export type ThemeDocumentInput = {
   shade: ShadeVariant;
   accent: AccentFamily;
   dim: DimVariant;
+  panels: PanelVariant;
+  terminal: TerminalVariant;
   borders: BorderVariant;
 };
 
@@ -23,6 +40,8 @@ export const createTheme = (mode: Mode): BuiltTheme => {
     shade: defaultShadeForMode(mode),
     accent: defaultAccent,
     dim: defaultDimming,
+    panels: defaultPanels,
+    terminal: defaultTerminal,
     borders: defaultBorders,
   });
 
@@ -45,6 +64,8 @@ export const createThemeDocumentFromInput = (name: string, input: ThemeDocumentI
     shade: input.shade,
     accentFamily: input.accent,
     dim: input.dim,
+    panels: input.panels,
+    terminal: input.terminal,
     borders: input.borders,
   });
 

@@ -5,15 +5,21 @@ import {
   defaultBorders,
   defaultDimming,
   defaultMode,
+  defaultPanels,
   defaultShadeForMode,
+  defaultTerminal,
   dimVariants,
   modes,
+  panelVariants,
   shadeVariants,
+  terminalVariants,
   type AccentFamily,
   type BorderVariant,
   type DimVariant,
   type Mode,
+  type PanelVariant,
   type ShadeVariant,
+  type TerminalVariant,
 } from "@/config.ts";
 import * as vscode from "vscode";
 
@@ -22,6 +28,8 @@ export type UmbraSettings = {
   shade: ShadeVariant;
   accent: AccentFamily;
   dim: DimVariant;
+  panels: PanelVariant;
+  terminal: TerminalVariant;
   borders: BorderVariant;
 };
 
@@ -30,6 +38,8 @@ type StoredUmbraSettings = {
   shade?: unknown;
   accent?: unknown;
   dimming?: unknown;
+  panels?: unknown;
+  terminal?: unknown;
   borders?: unknown;
 };
 
@@ -45,6 +55,8 @@ export const defaultSettings = (mode: Mode = defaultMode): UmbraSettings => ({
   shade: defaultShadeForMode(mode),
   accent: defaultAccent,
   dim: defaultDimming,
+  panels: defaultPanels,
+  terminal: defaultTerminal,
   borders: defaultBorders,
 });
 
@@ -59,6 +71,8 @@ export const readSettings = (): UmbraSettings => {
     shade: parseShade(stored?.shade, mode),
     accent: parseAccent(stored?.accent),
     dim: parseDim(stored?.dimming),
+    panels: parsePanels(stored?.panels),
+    terminal: parseTerminal(stored?.terminal),
     borders: parseBorders(stored?.borders),
   };
 };
@@ -69,6 +83,8 @@ export const updateSettings = async (settings: UmbraSettings): Promise<void> => 
     shade: settings.shade.id,
     accent: settings.accent,
     dimming: settings.dim.id,
+    panels: settings.panels.id,
+    terminal: settings.terminal.id,
     borders: settings.borders.id,
   } satisfies StoredUmbraSettings);
 };
@@ -89,7 +105,16 @@ const parseDim = (value: unknown): DimVariant => {
   return dimVariants.find((dim) => dim.id === value) ?? defaultDimming;
 };
 
+const parsePanels = (value: unknown): PanelVariant => {
+  return panelVariants.find((panels) => panels.id === value) ?? defaultPanels;
+};
+
+const parseTerminal = (value: unknown): TerminalVariant => {
+  return terminalVariants.find((terminal) => terminal.id === value) ?? defaultTerminal;
+};
+
 const parseBorders = (value: unknown): BorderVariant => {
+  if (value === "off") return borderVariants[0];
   return borderVariants.find((borders) => borders.id === value) ?? defaultBorders;
 };
 

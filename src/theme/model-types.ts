@@ -1,4 +1,12 @@
-import type { AccentFamily, BorderVariant, DimVariant, Mode, ShadeVariant } from "@/config.ts";
+import type {
+  AccentFamily,
+  BorderVariant,
+  DimVariant,
+  Mode,
+  PanelVariant,
+  ShadeVariant,
+  TerminalVariant,
+} from "@/config.ts";
 
 export type Accent = {
   family: AccentFamily;
@@ -68,6 +76,8 @@ export type ThemeModel = {
   accentFamily: AccentFamily;
   shade: ShadeVariant;
   dim: DimVariant;
+  panels: PanelVariant;
+  terminal: TerminalVariant;
   borders: BorderVariant;
   accent: Accent;
   surfaces: Surfaces;

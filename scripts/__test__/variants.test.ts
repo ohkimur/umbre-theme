@@ -1,7 +1,17 @@
 import { describe, expect, test } from "bun:test";
 import { readdir, readFile } from "node:fs/promises";
 
-import { accentFamilies, borderVariants, dimVariants, modes, shadeVariants } from "@/config.ts";
+import {
+  accentFamilies,
+  borderVariants,
+  defaultPanels,
+  defaultTerminal,
+  dimVariants,
+  modes,
+  panelVariants,
+  shadeVariants,
+  terminalVariants,
+} from "@/config.ts";
 import { createThemeModel, type ThemeModel } from "@/theme/model.ts";
 import { transparent, white } from "@/theme/palette.ts";
 import { semanticTokenColors } from "@/theme/semantic.ts";
@@ -11,6 +21,14 @@ import { createThemes } from "@scripts/build/themes.ts";
 import { wcagContrast } from "culori";
 
 const expectedVariantCount =
+  modes.length *
+  shadeVariants.length *
+  accentFamilies.length *
+  dimVariants.length *
+  panelVariants.length *
+  terminalVariants.length *
+  borderVariants.length;
+const validatedCoreVariantCount =
   modes.length * shadeVariants.length * accentFamilies.length * dimVariants.length * borderVariants.length;
 
 describe("Umbra generated theme inventory", () => {
@@ -23,7 +41,7 @@ describe("Umbra generated theme inventory", () => {
   });
 
   test("keeps variants generated on demand instead of contributed to the picker", () => {
-    expect(expectedVariantCount).toBe(1700);
+    expect(expectedVariantCount).toBe(106250);
     expect(createThemes().flatMap((theme) => theme.contribution)).toHaveLength(2);
   });
 });
@@ -39,7 +57,9 @@ describe("Umbra surface recipes", () => {
           shade,
           accentFamily: "amber",
           dim: dimVariants[0],
-          borders: borderVariants[0],
+          panels: defaultPanels,
+          terminal: defaultTerminal,
+          borders: borderVariants[2],
         });
         const contrastFromPaper = contrastRatio(model.surfaces.editor, white());
 
@@ -59,7 +79,9 @@ describe("Umbra surface recipes", () => {
         shade,
         accentFamily: "amber",
         dim: dimVariants[0],
-        borders: borderVariants[0],
+        panels: defaultPanels,
+        terminal: defaultTerminal,
+        borders: borderVariants[2],
       });
       return contrastRatio(model.surfaces.editor, white());
     });
@@ -80,7 +102,9 @@ describe("Umbra surface recipes", () => {
       shade: pureBlackShade!,
       accentFamily: "amber",
       dim: dimVariants[0],
-      borders: borderVariants[0],
+      panels: defaultPanels,
+      terminal: defaultTerminal,
+      borders: borderVariants[2],
     });
 
     expect(contrastRatio(pureBlack.surfaces.raised, pureBlack.surfaces.overlay)).toBeGreaterThanOrEqual(1.08);
@@ -95,14 +119,18 @@ describe("Umbra surface recipes", () => {
         shade,
         accentFamily: "amber",
         dim: dimVariants[0],
-        borders: borderVariants[0],
+        panels: defaultPanels,
+        terminal: defaultTerminal,
+        borders: borderVariants[2],
       });
       const faintColor = createThemeModel({
         mode,
         shade,
         accentFamily: "amber",
         dim: dimVariants[4],
-        borders: borderVariants[0],
+        panels: defaultPanels,
+        terminal: defaultTerminal,
+        borders: borderVariants[2],
       });
 
       expect(faintColor.syntax.keyword).not.toBe(fullColor.syntax.keyword);
@@ -111,10 +139,60 @@ describe("Umbra surface recipes", () => {
       expect(workbenchColors(faintColor)).toEqual(workbenchColors(fullColor));
     }
   });
+
+  test("panel contrast changes chrome without moving the editor surface", () => {
+    const lowContrast = createThemeModel({
+      mode: "dark",
+      shade: shadeVariants[4],
+      accentFamily: "amber",
+      dim: dimVariants[1],
+      panels: panelVariants[0],
+      terminal: defaultTerminal,
+      borders: borderVariants[2],
+    });
+    const highContrast = createThemeModel({
+      mode: "dark",
+      shade: shadeVariants[4],
+      accentFamily: "amber",
+      dim: dimVariants[1],
+      panels: panelVariants[4],
+      terminal: defaultTerminal,
+      borders: borderVariants[2],
+    });
+
+    expect(highContrast.surfaces.editor).toBe(lowContrast.surfaces.editor);
+    expect(highContrast.surfaces.chrome3).not.toBe(lowContrast.surfaces.chrome3);
+  });
+
+  test("terminal contrast changes only terminal background", () => {
+    const quietTerminal = createThemeModel({
+      mode: "dark",
+      shade: shadeVariants[4],
+      accentFamily: "amber",
+      dim: dimVariants[1],
+      panels: defaultPanels,
+      terminal: terminalVariants[0],
+      borders: borderVariants[2],
+    });
+    const strongTerminal = createThemeModel({
+      mode: "dark",
+      shade: shadeVariants[4],
+      accentFamily: "amber",
+      dim: dimVariants[1],
+      panels: defaultPanels,
+      terminal: terminalVariants[4],
+      borders: borderVariants[2],
+    });
+
+    expect(quietTerminal.surfaces).toEqual(strongTerminal.surfaces);
+    expect(workbenchColors(quietTerminal)["terminal.background"]).not.toBe(
+      workbenchColors(strongTerminal)["terminal.background"],
+    );
+  });
 });
 
 describe("Umbra variant colors", () => {
-  test("all generated variants include valid workbench, token, semantic, and border colors", () => {
+  test("core generated variants include valid workbench, token, semantic, and border colors", () => {
     let variantCount = 0;
 
     for (const mode of modes) {
@@ -122,7 +200,15 @@ describe("Umbra variant colors", () => {
         for (const accentFamily of accentFamilies) {
           for (const dim of dimVariants) {
             for (const borders of borderVariants) {
-              const model = createThemeModel({ mode, shade, accentFamily, dim, borders });
+              const model = createThemeModel({
+                mode,
+                shade,
+                accentFamily,
+                dim,
+                panels: defaultPanels,
+                terminal: defaultTerminal,
+                borders,
+              });
               const colors = workbenchColors(model);
               const tokens = tokenColors(model);
               const semanticTokens = semanticTokenColors(model);
@@ -130,9 +216,9 @@ describe("Umbra variant colors", () => {
               expect(colors["editor.background"]).toBeTruthy();
               expect(tokens.length).toBeGreaterThan(0);
               expect(Object.keys(semanticTokens).length).toBeGreaterThan(0);
-              expect(colors["panel.border"] === transparent()).toBe(!borders.enabled);
+              expect(colors["panel.border"] === transparent()).toBe(borders.opacity === 0);
 
-              if (!borders.enabled) {
+              if (borders.opacity === 0) {
                 expect(colors["window.activeBorder"]).toBe(model.surfaces.editor);
                 expect(colors["window.inactiveBorder"]).toBe(model.surfaces.editor);
               }
@@ -145,7 +231,7 @@ describe("Umbra variant colors", () => {
       }
     }
 
-    expect(variantCount).toBe(expectedVariantCount);
+    expect(variantCount).toBe(validatedCoreVariantCount);
   });
 });
 
