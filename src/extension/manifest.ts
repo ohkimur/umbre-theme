@@ -36,7 +36,7 @@ export const createExtensionManifest = (themes: ThemeContribution[]): ExtensionM
   description: "A quiet Tailwind theme for focused coding.",
   version: extension.version,
   publisher: extension.publisher,
-  license: "MIT",
+  license: "Apache-2.0",
   type: "module",
   main: "./extension.js",
   icon: "assets/logo.png",
