@@ -1,0 +1,37 @@
+import type { ThemeModel } from "@/theme/model.ts";
+import type { SemanticTokenColor } from "@/theme/types.ts";
+
+export const semanticTokenColors = ({ syntax }: ThemeModel): Record<string, SemanticTokenColor> => ({
+  namespace: syntax.string,
+  class: syntax.class,
+  "class.defaultLibrary": syntax.type,
+  enum: syntax.type,
+  "enum.defaultLibrary": syntax.type,
+  interface: syntax.interface,
+  "interface.defaultLibrary": {
+    foreground: syntax.interface,
+    italic: true,
+  },
+  struct: syntax.class,
+  "struct.defaultLibrary": syntax.type,
+  type: syntax.type,
+  "type.defaultLibrary": syntax.type,
+  typeParameter: syntax.type,
+  parameter: syntax.parameter,
+  property: syntax.property,
+  enumMember: syntax.constant,
+  event: syntax.operator,
+  function: syntax.function,
+  method: syntax.method,
+  macro: syntax.special,
+  label: syntax.special,
+  comment: syntax.comment,
+  string: syntax.string,
+  keyword: syntax.keyword,
+  number: syntax.number,
+  regexp: syntax.regexp,
+  operator: syntax.operator,
+  decorator: syntax.special,
+  variable: syntax.foreground,
+  "variable.readonly": syntax.constant,
+});
