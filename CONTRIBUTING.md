@@ -36,6 +36,17 @@ bun run package        # create umbra-theme.vsix from the existing dist/
 - Include a short description of what changed and why.
 - For visual theme changes, describe the affected mode, surface, token group, or command flow.
 
+## Publishing secrets
+
+Publishing runs from `.github/workflows/publish-extension.yml` and uses GitHub Actions repository secrets. Use `.env.example` as the checklist for the required token names and where to create them.
+
+Required secrets:
+
+- `VSCE_PAT` — Azure DevOps Personal Access Token with **Marketplace: Manage** scope for the Visual Studio Marketplace.
+- `OVSX_PAT` — Open VSX access token for Cursor-compatible distribution through Open VSX.
+
+Add them in GitHub under **Repository → Settings → Secrets and variables → Actions → New repository secret**.
+
 ## Project guardrails
 
 - Do not write, rewrite, or clean user/editor settings such as `settings.json`, `workbench.colorCustomizations`, token customizations, or `workbench.colorTheme`.
