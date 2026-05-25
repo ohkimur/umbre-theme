@@ -7,4 +7,4 @@ export const logoPath = new URL("logo.png", assetsDir);
 export const logoSourcePath = new URL("logo.svg", assetsDir);
 export const readmePath = new URL("README.md", rootDir);
 export const licensePath = new URL("LICENSE", rootDir);
-export const vsixPath = new URL("umbra-theme.vsix", rootDir);
+export const vsixPath = new URL("umbra-color-theme.vsix", rootDir);

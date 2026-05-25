@@ -1,9 +1,9 @@
 export const extension = {
-  name: "umbra-theme",
+  name: "umbra-color-theme",
   displayName: "Umbra",
   publisher: "ohkimur",
   version: "0.1.0",
-  id: "ohkimur.umbra-theme",
+  id: "ohkimur.umbra-color-theme",
 } as const;
 
 export const modes = ["dark", "light"] as const;

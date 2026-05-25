@@ -49,7 +49,7 @@ const requirePackagedVsix = async (): Promise<void> => {
   try {
     await access(vsixPath);
   } catch {
-    throw new Error("umbra-theme.vsix was not found. Run `bun run package` before installing.");
+    throw new Error("umbra-color-theme.vsix was not found. Run `bun run package` before installing.");
   }
 };
 

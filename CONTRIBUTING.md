@@ -25,7 +25,7 @@ Useful local commands:
 ```bash
 bun run dev:code       # build and open a VS Code extension-development window
 bun run dev:cursor     # build and open a Cursor extension-development window
-bun run package        # create umbra-theme.vsix from the existing dist/
+bun run package        # create umbra-color-theme.vsix from the existing dist/
 ```
 
 ## Pull request guidelines
