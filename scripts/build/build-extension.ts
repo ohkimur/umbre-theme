@@ -2,7 +2,15 @@ import { createExtensionManifest } from "@/extension/manifest.ts";
 import { copyFile, ensureDir, remove } from "@/utils/fs.ts";
 import { writeJson } from "@/utils/json.ts";
 import { bundleRuntime } from "@scripts/build/bundle-runtime.ts";
-import { distDir, licensePath, readmePath, themesDir } from "@scripts/build/paths.ts";
+import {
+  distAssetsDir,
+  distDir,
+  licensePath,
+  logoPath,
+  logoSourcePath,
+  readmePath,
+  themesDir,
+} from "@scripts/build/paths.ts";
 import { createThemes, type BuiltThemeFile } from "@scripts/build/themes.ts";
 
 export const buildExtension = async (): Promise<void> => {
@@ -11,6 +19,8 @@ export const buildExtension = async (): Promise<void> => {
   await resetDist();
   await bundleRuntime();
   await writeThemeFiles(themes, themesDir);
+  await copyFile(logoPath, new URL("logo.png", distAssetsDir));
+  await copyFile(logoSourcePath, new URL("logo.svg", distAssetsDir));
   await writeJson(
     new URL("package.json", distDir),
     createExtensionManifest(themes.map((theme) => theme.contribution)),
@@ -24,6 +34,7 @@ export const buildExtension = async (): Promise<void> => {
 const resetDist = async (): Promise<void> => {
   await remove(distDir);
   await ensureDir(themesDir);
+  await ensureDir(distAssetsDir);
 };
 
 const writeThemeFiles = async (themes: readonly BuiltThemeFile[], directory: URL): Promise<void> => {

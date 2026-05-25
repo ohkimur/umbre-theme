@@ -11,6 +11,7 @@ type ExtensionManifest = {
   license: string;
   type: "module";
   main: string;
+  icon: string;
   activationEvents: string[];
   repository: {
     type: "git";
@@ -38,13 +39,14 @@ export const createExtensionManifest = (themes: ThemeContribution[]): ExtensionM
   license: "MIT",
   type: "module",
   main: "./extension.js",
+  icon: "assets/logo.png",
   activationEvents: ["onCommand:umbra.configure", "onCommand:umbra.toggleMode", "onStartupFinished"],
   repository: {
     type: "git",
     url: "https://github.com/ohkimur/umbra-theme.git",
     directory: ".",
   },
-  files: ["extension.js", "themes/**", "README.md", "LICENSE", "package.json"],
+  files: ["extension.js", "assets/**", "themes/**", "README.md", "LICENSE", "package.json"],
   engines: {
     vscode: "^1.100.0",
   },

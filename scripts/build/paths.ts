@@ -1,6 +1,10 @@
 export const rootDir = new URL("../../", import.meta.url);
 export const distDir = new URL("dist/", rootDir);
 export const themesDir = new URL("themes/", distDir);
+export const assetsDir = new URL("assets/", rootDir);
+export const distAssetsDir = new URL("assets/", distDir);
+export const logoPath = new URL("logo.png", assetsDir);
+export const logoSourcePath = new URL("logo.svg", assetsDir);
 export const readmePath = new URL("README.md", rootDir);
 export const licensePath = new URL("LICENSE", rootDir);
 export const vsixPath = new URL("umbra-theme.vsix", rootDir);
