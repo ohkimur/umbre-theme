@@ -26,8 +26,8 @@ bun run typecheck   # TypeScript check
 bun run test
 bun run build          # create dist/
 bun run package        # create umbra-theme.vsix from the existing dist/
-bun run dev:cursor     # build and open an extension-development Cursor window
-bun run dev:code       # build and open an extension-development VS Code window
+bun run dev:cursor     # fresh build and open a new extension-development Cursor window
+bun run dev:code       # fresh build and open a new extension-development VS Code window
 bun run install:cursor # install the existing VSIX into Cursor
 bun run install:vscode # install the existing VSIX into VS Code
 ```
