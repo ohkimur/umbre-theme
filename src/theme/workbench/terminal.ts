@@ -4,8 +4,7 @@ import type { ColorMap } from "@/theme/types.ts";
 
 export const terminalColors = ({ accent, surfaces, terminal, uiSyntax: syntax }: ThemeModel): ColorMap => {
   const lift = (hex: string): string => (surfaces.isDark ? lighten(hex, 0.12) : darken(hex, 0.08));
-  const depth = (terminal.level - 1) / 4;
-  const terminalBackground = mix(surfaces.editor, surfaces.raised, depth);
+  const terminalBackground = mix(surfaces.editor, surfaces.raised, terminal.backgroundMix);
 
   return {
     "terminal.background": terminalBackground,

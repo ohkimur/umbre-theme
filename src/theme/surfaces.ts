@@ -14,7 +14,7 @@ export const createSurfaces = (mode: Mode, shade: ShadeVariant, panels: PanelVar
 const createDarkSurfaces = (shade: ShadeVariant, panels: PanelVariant): Surfaces => {
   const depth = shadeDepth(shade);
   const bg = shade.level === 5 ? black() : mix(tw("zinc", 900), tw("zinc", 950), 0.18 + depth * 0.72);
-  const contrast = panelContrast(panels);
+  const contrast = panels.surfaceContrast;
   const layers =
     shade.level === 5 ? createPureBlackLayers(bg, contrast) : createDarkLayers(bg, depth, contrast);
   const muted = tw("zinc", 500);
@@ -56,7 +56,7 @@ const createPureBlackLayers = (bg: string, contrast: number): SurfaceLayers => (
   chrome3: mix(bg, tw("zinc", 800), scaled(0.66, contrast)),
   overlay: mix(bg, tw("zinc", 800), scaled(0.66, contrast)),
   overlay2: mix(bg, tw("zinc", 700), scaled(0.58, contrast)),
-  raised: mix(bg, tw("zinc", 700), scaled(0.62, contrast)),
+  raised: mix(bg, tw("zinc", 700), Math.max(scaled(0.62, contrast), 0.62)),
 });
 
 const createLightSurfaces = (shade: ShadeVariant, panels: PanelVariant): Surfaces => {
@@ -68,7 +68,7 @@ const createLightSurfaces = (shade: ShadeVariant, panels: PanelVariant): Surface
   return {
     bg,
     editor: bg,
-    ...createLightLayers(bg, depth, panelContrast(panels)),
+    ...createLightLayers(bg, depth, panels.surfaceContrast),
     line: withAlpha(mix(tw("zinc", 300), tw("zinc", 500), depth * 0.36), 0.44),
     lineStrong: withAlpha(mix(tw("zinc", 400), tw("zinc", 600), depth * 0.34), 0.54),
     fg: tw("zinc", 950),
@@ -99,8 +99,6 @@ const createLightLayers = (bg: string, depth: number, contrast: number): Surface
 });
 
 const createDeemphasized = (muted: string, subtle: string): string => mix(muted, subtle, 0.58);
-
-const panelContrast = (panels: PanelVariant): number => 0.45 + ((panels.level - 1) / 4) * 0.75;
 
 const scaled = (amount: number, contrast: number): number => amount * contrast;
 
