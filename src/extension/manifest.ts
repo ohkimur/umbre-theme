@@ -57,11 +57,7 @@ export const createExtensionManifest = (
   type: "module",
   main: "./extension.js",
   icon: "assets/logo.png",
-  activationEvents: [
-    `onCommand:${commandIds.configure}`,
-    `onCommand:${commandIds.toggleMode}`,
-    "onStartupFinished",
-  ],
+  activationEvents: [`onCommand:${commandIds.configure}`, "onStartupFinished"],
   repository: packageMetadata.repository,
   files: ["extension.js", "assets/**", "themes/**", "README.md", "LICENSE", "package.json"],
   engines: {

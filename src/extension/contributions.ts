@@ -12,9 +12,4 @@ export const commandContributions = (): CommandContribution[] => [
     title: product.commands.configure.title,
     category: product.displayName,
   },
-  {
-    command: product.commands.toggleMode.id,
-    title: product.commands.toggleMode.title,
-    category: product.displayName,
-  },
 ];

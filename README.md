@@ -43,4 +43,3 @@ Changes preview while you choose. When you apply them, Umbre updates its own gen
 ## Commands
 
 - **Umbre: Configure Theme**: customize the active Umbre theme.
-- **Umbre: Configure Opposite Theme**: prepare the other dark or light mode before switching to it from the Color Theme picker.

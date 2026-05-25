@@ -1,4 +1,3 @@
-import { defaultShadeForMode } from "@/config.ts";
 import { commandIds, product } from "@/product.ts";
 import { applySettings } from "@/runtime/apply.ts";
 import { pickSettings } from "@/runtime/picker.ts";
@@ -8,10 +7,7 @@ import { themeModeFromLabel } from "@/theme/naming.ts";
 import * as vscode from "vscode";
 
 export const registerCommands = (context: vscode.ExtensionContext): void => {
-  context.subscriptions.push(
-    vscode.commands.registerCommand(commandIds.configure, configureTheme),
-    vscode.commands.registerCommand(commandIds.toggleMode, toggleMode),
-  );
+  context.subscriptions.push(vscode.commands.registerCommand(commandIds.configure, configureTheme));
 };
 
 const configureTheme = async (): Promise<void> => {
@@ -33,20 +29,6 @@ const configureTheme = async (): Promise<void> => {
   await updateSettings(picked);
   const label = await applySettings(picked);
   await showAppliedMessage(label, activeMode, picked.mode);
-};
-
-const toggleMode = async (): Promise<void> => {
-  const current = readSettings();
-  const mode = current.mode === "dark" ? "light" : "dark";
-  const next: UmbreSettings = {
-    ...current,
-    mode,
-    shade: defaultShadeForMode(mode),
-  };
-
-  await updateSettings(next);
-  const label = await applySettings(next);
-  await showAppliedMessage(label, currentColorThemeMode(), next.mode);
 };
 
 const currentColorThemeMode = () => {

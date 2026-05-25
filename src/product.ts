@@ -7,14 +7,9 @@ export const product = {
       id: "umbre.configure",
       title: "Configure Theme",
     },
-    toggleMode: {
-      id: "umbre.toggleMode",
-      title: "Configure Opposite Theme",
-    },
   },
 } as const;
 
 export const commandIds = {
   configure: product.commands.configure.id,
-  toggleMode: product.commands.toggleMode.id,
 } as const;
