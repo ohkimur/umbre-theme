@@ -1,7 +1,12 @@
 import {
   accentFamilies,
   borderVariants,
+  defaultAccent,
+  defaultBorders,
+  defaultDimming,
+  defaultPanels,
   defaultShadeForMode,
+  defaultTerminal,
   dimVariants,
   modes,
   panelVariants,
@@ -27,6 +32,7 @@ type PickItem<Value> = vscode.QuickPickItem & {
 
 type ConfigurationTarget =
   | "all"
+  | "recommended"
   | "mode"
   | "shade"
   | "accent"
@@ -44,6 +50,7 @@ export const pickSettings = async (
   if (!target) return undefined;
 
   if (target === "all") return pickAllSettings(current, previewSettings);
+  if (target === "recommended") return recommendedSettings(current.mode);
   return pickSingleSetting(current, target, previewSettings);
 };
 
@@ -55,6 +62,12 @@ const pickConfigurationTarget = async (current: UmbraSettings): Promise<Configur
         description: "Guided setup",
         detail: "Step through all Umbra theme controls.",
         value: "all",
+      },
+      {
+        label: "Recommended defaults",
+        description: "Reset",
+        detail: "Use level 3 for shade, editor dimming, panels, and terminal; level 2 borders.",
+        value: "recommended",
       },
       {
         label: "Mode",
@@ -76,25 +89,25 @@ const pickConfigurationTarget = async (current: UmbraSettings): Promise<Configur
       },
       {
         label: "Editor dimming",
-        description: `Level ${current.dim.level}`,
+        description: settingSummary(current.dim),
         detail: "Tune syntax color intensity in the editor only.",
         value: "dimming",
       },
       {
         label: "Panel contrast",
-        description: `Level ${current.panels.level}`,
+        description: settingSummary(current.panels),
         detail: "Tune sidebar, panel, tabs, and widget contrast against the editor.",
         value: "panels",
       },
       {
         label: "Terminal contrast",
-        description: `Level ${current.terminal.level}`,
+        description: settingSummary(current.terminal),
         detail: "Tune terminal background contrast independently.",
         value: "terminal",
       },
       {
         label: "Border intensity",
-        description: `Level ${current.borders.level}`,
+        description: settingSummary(current.borders),
         detail: "Tune outlines between workbench areas.",
         value: "borders",
       },
@@ -105,7 +118,7 @@ const pickConfigurationTarget = async (current: UmbraSettings): Promise<Configur
 
 const pickSingleSetting = async (
   current: UmbraSettings,
-  target: Exclude<ConfigurationTarget, "all">,
+  target: Exclude<ConfigurationTarget, "all" | "recommended">,
   previewSettings?: PreviewSettings,
 ): Promise<UmbraSettings | undefined> => {
   switch (target) {
@@ -174,6 +187,16 @@ const pickAllSettings = async (
   return { ...withTerminal, borders };
 };
 
+const recommendedSettings = (mode: Mode): UmbraSettings => ({
+  mode,
+  shade: defaultShadeForMode(mode),
+  accent: defaultAccent,
+  dim: defaultDimming,
+  panels: defaultPanels,
+  terminal: defaultTerminal,
+  borders: defaultBorders,
+});
+
 const pickMode = async (
   current: UmbraSettings,
   previewSettings?: PreviewSettings,
@@ -235,7 +258,8 @@ const pickDimming = async (
   return pickValue(
     dimVariants.map((dim) => ({
       label: itemLabel(`Level ${dim.level}`, current.dim.id === dim.id),
-      detail: levelSlider(dim.level),
+      description: dim.label,
+      detail: settingDetail(dim),
       value: dim,
       current: current.dim.id === dim.id,
     })),
@@ -252,7 +276,8 @@ const pickPanels = async (
   return pickValue(
     panelVariants.map((panels) => ({
       label: itemLabel(`Level ${panels.level}`, current.panels.id === panels.id),
-      detail: levelSlider(panels.level),
+      description: panels.label,
+      detail: settingDetail(panels),
       value: panels,
       current: current.panels.id === panels.id,
     })),
@@ -269,7 +294,8 @@ const pickTerminal = async (
   return pickValue(
     terminalVariants.map((terminal) => ({
       label: itemLabel(`Level ${terminal.level}`, current.terminal.id === terminal.id),
-      detail: levelSlider(terminal.level),
+      description: terminal.label,
+      detail: settingDetail(terminal),
       value: terminal,
       current: current.terminal.id === terminal.id,
     })),
@@ -286,7 +312,8 @@ const pickBorders = async (
   return pickValue(
     borderVariants.map((borders) => ({
       label: itemLabel(`Level ${borders.level}`, current.borders.id === borders.id),
-      detail: levelSlider(borders.level),
+      description: borders.label,
+      detail: settingDetail(borders),
       value: borders,
       current: current.borders.id === borders.id,
     })),
@@ -308,6 +335,7 @@ const pickValue = async <Value>(
   picker.ignoreFocusOut = true;
   picker.items = items;
   picker.matchOnDescription = true;
+  picker.matchOnDetail = true;
   if (activeItem) picker.activeItems = [activeItem];
 
   return new Promise((resolve) => {
@@ -342,6 +370,14 @@ const pickValue = async <Value>(
 };
 
 const itemLabel = (label: string, selected: boolean): string => (selected ? `$(check) ${label}` : label);
+
+const settingSummary = (setting: { level: number; label: string }): string => {
+  return `Level ${setting.level}: ${setting.label}`;
+};
+
+const settingDetail = (setting: { level: number; detail: string }): string => {
+  return `${levelSlider(setting.level)}  ${setting.detail}`;
+};
 
 const shadeLabel = (mode: Mode, shade: ShadeVariant): string => {
   return mode === "dark" ? shade.darkLabel : shade.lightLabel;
