@@ -1,6 +1,20 @@
-import { extension } from "@/config.ts";
 import { commandContributions, type CommandContribution } from "@/extension/contributions.ts";
+import { commandIds } from "@/product.ts";
 import type { ThemeContribution } from "@/theme/types.ts";
+
+export type ExtensionPackageMetadata = {
+  name: string;
+  displayName: string;
+  description: string;
+  version: string;
+  publisher: string;
+  license: string;
+  repository: {
+    type: "git";
+    url: string;
+    directory?: string;
+  };
+};
 
 type ExtensionManifest = {
   name: string;
@@ -16,7 +30,7 @@ type ExtensionManifest = {
   repository: {
     type: "git";
     url: string;
-    directory: string;
+    directory?: string;
   };
   files: string[];
   engines: {
@@ -30,22 +44,25 @@ type ExtensionManifest = {
   };
 };
 
-export const createExtensionManifest = (themes: ThemeContribution[]): ExtensionManifest => ({
-  name: extension.name,
-  displayName: extension.displayName,
-  description: "A quiet, deeply customizable theme for focused coding.",
-  version: extension.version,
-  publisher: extension.publisher,
-  license: "Apache-2.0",
+export const createExtensionManifest = (
+  packageMetadata: ExtensionPackageMetadata,
+  themes: ThemeContribution[],
+): ExtensionManifest => ({
+  name: packageMetadata.name,
+  displayName: packageMetadata.displayName,
+  description: packageMetadata.description,
+  version: packageMetadata.version,
+  publisher: packageMetadata.publisher,
+  license: packageMetadata.license,
   type: "module",
   main: "./extension.js",
   icon: "assets/logo.png",
-  activationEvents: ["onCommand:umbre.configure", "onCommand:umbre.toggleMode", "onStartupFinished"],
-  repository: {
-    type: "git",
-    url: "https://github.com/ohkimur/umbre-theme.git",
-    directory: ".",
-  },
+  activationEvents: [
+    `onCommand:${commandIds.configure}`,
+    `onCommand:${commandIds.toggleMode}`,
+    "onStartupFinished",
+  ],
+  repository: packageMetadata.repository,
   files: ["extension.js", "assets/**", "themes/**", "README.md", "LICENSE", "package.json"],
   engines: {
     vscode: "^1.100.0",

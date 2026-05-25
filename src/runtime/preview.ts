@@ -1,4 +1,5 @@
 import { modes, type Mode } from "@/config.ts";
+import { product } from "@/product.ts";
 import type { UmbreSettings } from "@/runtime/settings.ts";
 import { copyVariantToTheme, readThemeFile, writeThemeFile } from "@/runtime/theme-files.ts";
 import { themeModeFromLabel } from "@/theme/naming.ts";
@@ -38,7 +39,7 @@ export const createThemePreview = async (): Promise<ThemePreview> => {
         if (previewErrorShown) return;
         previewErrorShown = true;
         const message = error instanceof Error ? error.message : String(error);
-        await vscode.window.showErrorMessage(`Unable to preview Umbre theme: ${message}`);
+        await vscode.window.showErrorMessage(`Unable to preview ${product.displayName} theme: ${message}`);
       });
   };
 

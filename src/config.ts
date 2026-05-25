@@ -1,11 +1,3 @@
-export const extension = {
-  name: "umbre-theme",
-  displayName: "Umbre",
-  publisher: "ohkimur",
-  version: "0.1.0",
-  id: "ohkimur.umbre-theme",
-} as const;
-
 export const modes = ["dark", "light"] as const;
 export type Mode = (typeof modes)[number];
 

@@ -21,6 +21,7 @@ import {
   type ShadeVariant,
   type TerminalVariant,
 } from "@/config.ts";
+import { product } from "@/product.ts";
 import * as vscode from "vscode";
 
 export type UmbreSettings = {
@@ -43,7 +44,7 @@ type StoredUmbreSettings = {
   borders?: unknown;
 };
 
-const storageKey = "umbre.themeSettings";
+const storageKey = product.settingsStorageKey;
 let state: vscode.Memento | undefined;
 
 export const initializeSettings = (context: vscode.ExtensionContext): void => {

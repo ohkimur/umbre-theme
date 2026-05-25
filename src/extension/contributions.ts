@@ -1,3 +1,5 @@
+import { product } from "@/product.ts";
+
 export type CommandContribution = {
   command: string;
   title: string;
@@ -6,13 +8,13 @@ export type CommandContribution = {
 
 export const commandContributions = (): CommandContribution[] => [
   {
-    command: "umbre.configure",
-    title: "Configure Theme",
-    category: "Umbre",
+    command: product.commands.configure.id,
+    title: product.commands.configure.title,
+    category: product.displayName,
   },
   {
-    command: "umbre.toggleMode",
-    title: "Toggle Opposite Dark/Light Mode",
-    category: "Umbre",
+    command: product.commands.toggleMode.id,
+    title: product.commands.toggleMode.title,
+    category: product.displayName,
   },
 ];

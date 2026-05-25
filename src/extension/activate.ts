@@ -1,3 +1,4 @@
+import { commandIds } from "@/product.ts";
 import { applySettingsIfActive, initializeThemeApplication } from "@/runtime/apply.ts";
 import { registerCommands } from "@/runtime/commands.ts";
 import { initializeSettings } from "@/runtime/settings.ts";
@@ -19,7 +20,7 @@ export const activate = (context: vscode.ExtensionContext): void => {
 
 const applyAndConfigureSelectedTheme = async (): Promise<void> => {
   const applied = await applySelectedUmbreTheme();
-  if (applied) await vscode.commands.executeCommand("umbre.configure");
+  if (applied) await vscode.commands.executeCommand(commandIds.configure);
 };
 
 export const deactivate = (): void => undefined;

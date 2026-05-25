@@ -1,4 +1,5 @@
 import type { Mode } from "@/config.ts";
+import { product } from "@/product.ts";
 import type { UmbreSettings } from "@/runtime/settings.ts";
 import { createThemeDocumentFromInput } from "@/theme/create-theme.ts";
 import { themeFileName, themeLabel } from "@/theme/naming.ts";
@@ -48,7 +49,7 @@ const themeUri = (mode: Mode): vscode.Uri => {
 };
 
 const themesUri = (): vscode.Uri => {
-  if (!extensionUri) throw new Error("Umbre theme files were used before activation.");
+  if (!extensionUri) throw new Error(`${product.displayName} theme files were used before activation.`);
   return vscode.Uri.joinPath(extensionUri, "themes");
 };
 

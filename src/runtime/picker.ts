@@ -20,7 +20,9 @@ import {
   type ShadeVariant,
   type TerminalVariant,
 } from "@/config.ts";
+import { product } from "@/product.ts";
 import type { UmbreSettings } from "@/runtime/settings.ts";
+import { themeLabel } from "@/theme/naming.ts";
 import { titleCase } from "@/utils/text.ts";
 import { debounce } from "es-toolkit";
 import * as vscode from "vscode";
@@ -60,7 +62,7 @@ const pickConfigurationTarget = async (current: UmbreSettings): Promise<Configur
       {
         label: "Configure all",
         description: "Guided setup",
-        detail: "Step through all Umbre theme controls.",
+        detail: `Step through all ${product.displayName} theme controls.`,
         value: "all",
       },
       {
@@ -72,7 +74,7 @@ const pickConfigurationTarget = async (current: UmbreSettings): Promise<Configur
       {
         label: "Mode",
         description: titleCase(current.mode),
-        detail: "Switch between Umbre Dark and Umbre Light.",
+        detail: `Switch between ${themeLabel("dark")} and ${themeLabel("light")}.`,
         value: "mode",
       },
       {
@@ -112,7 +114,7 @@ const pickConfigurationTarget = async (current: UmbreSettings): Promise<Configur
         value: "borders",
       },
     ],
-    "Umbre: what would you like to configure?",
+    `${product.displayName}: what would you like to configure?`,
   );
 };
 
@@ -204,11 +206,11 @@ const pickMode = async (
   return pickValue(
     modes.map((mode) => ({
       label: itemLabel(titleCase(mode), current.mode === mode),
-      description: mode === "dark" ? "Umbre Dark" : "Umbre Light",
+      description: themeLabel(mode),
       value: mode,
       current: current.mode === mode,
     })),
-    "Umbre: select mode",
+    `${product.displayName}: select mode`,
     (mode) => ({ ...current, mode, shade: defaultShadeForMode(mode) }),
     previewSettings,
   );
@@ -228,7 +230,7 @@ const pickShade = async (
       value: shade,
       current: current.shade.id === shade.id,
     })),
-    `Umbre: select ${noun} level`,
+    `${product.displayName}: select ${noun} level`,
     (shade) => ({ ...current, shade }),
     previewSettings,
   );
@@ -245,7 +247,7 @@ const pickAccent = async (
       value: accent,
       current: current.accent === accent,
     })),
-    "Umbre: select accent",
+    `${product.displayName}: select accent`,
     (accent) => ({ ...current, accent }),
     previewSettings,
   );
@@ -263,7 +265,7 @@ const pickDimming = async (
       value: dim,
       current: current.dim.id === dim.id,
     })),
-    "Umbre: select editor dimming",
+    `${product.displayName}: select editor dimming`,
     (dim) => ({ ...current, dim }),
     previewSettings,
   );
@@ -281,7 +283,7 @@ const pickPanels = async (
       value: panels,
       current: current.panels.id === panels.id,
     })),
-    "Umbre: select panel contrast",
+    `${product.displayName}: select panel contrast`,
     (panels) => ({ ...current, panels }),
     previewSettings,
   );
@@ -299,7 +301,7 @@ const pickTerminal = async (
       value: terminal,
       current: current.terminal.id === terminal.id,
     })),
-    "Umbre: select terminal contrast",
+    `${product.displayName}: select terminal contrast`,
     (terminal) => ({ ...current, terminal }),
     previewSettings,
   );
@@ -317,7 +319,7 @@ const pickBorders = async (
       value: borders,
       current: current.borders.id === borders.id,
     })),
-    "Umbre: select border intensity",
+    `${product.displayName}: select border intensity`,
     (borders) => ({ ...current, borders }),
     previewSettings,
   );

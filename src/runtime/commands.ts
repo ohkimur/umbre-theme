@@ -1,4 +1,5 @@
 import { defaultShadeForMode } from "@/config.ts";
+import { commandIds, product } from "@/product.ts";
 import { applySettings } from "@/runtime/apply.ts";
 import { pickSettings } from "@/runtime/picker.ts";
 import { createThemePreview } from "@/runtime/preview.ts";
@@ -8,8 +9,8 @@ import * as vscode from "vscode";
 
 export const registerCommands = (context: vscode.ExtensionContext): void => {
   context.subscriptions.push(
-    vscode.commands.registerCommand("umbre.configure", configureTheme),
-    vscode.commands.registerCommand("umbre.toggleMode", toggleMode),
+    vscode.commands.registerCommand(commandIds.configure, configureTheme),
+    vscode.commands.registerCommand(commandIds.toggleMode, toggleMode),
   );
 };
 
@@ -59,11 +60,11 @@ const showAppliedMessage = async (
   appliedMode: UmbreSettings["mode"],
 ): Promise<void> => {
   if (activeMode === appliedMode) {
-    await vscode.window.showInformationMessage(`Umbre theme applied: ${label}`);
+    await vscode.window.showInformationMessage(`${product.displayName} theme applied: ${label}`);
     return;
   }
 
   await vscode.window.showInformationMessage(
-    `Umbre configured: ${label}. Select ${label} in Preferences: Color Theme to switch modes.`,
+    `${product.displayName} configured: ${label}. Select ${label} in Preferences: Color Theme to switch modes.`,
   );
 };
