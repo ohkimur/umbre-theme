@@ -180,29 +180,57 @@ describe("Umbra surface recipes", () => {
   });
 
   test("terminal contrast changes only terminal background", () => {
-    const quietTerminal = createThemeModel({
-      mode: "dark",
-      shade: shadeVariants[4],
-      accentFamily: "amber",
-      dim: dimVariants[1],
-      panels: defaultPanels,
-      terminal: terminalVariants[0],
-      borders: borderVariants[2],
-    });
-    const strongTerminal = createThemeModel({
-      mode: "dark",
-      shade: shadeVariants[4],
-      accentFamily: "amber",
-      dim: dimVariants[1],
-      panels: defaultPanels,
-      terminal: terminalVariants[4],
-      borders: borderVariants[2],
-    });
+    for (const mode of modes) {
+      const quietTerminal = createThemeModel({
+        mode,
+        shade: shadeVariants[4],
+        accentFamily: "amber",
+        dim: dimVariants[1],
+        panels: defaultPanels,
+        terminal: terminalVariants[0],
+        borders: borderVariants[2],
+      });
+      const strongTerminal = createThemeModel({
+        mode,
+        shade: shadeVariants[4],
+        accentFamily: "amber",
+        dim: dimVariants[1],
+        panels: defaultPanels,
+        terminal: terminalVariants[4],
+        borders: borderVariants[2],
+      });
 
-    expect(quietTerminal.surfaces).toEqual(strongTerminal.surfaces);
-    expect(workbenchColors(quietTerminal)["terminal.background"]).not.toBe(
-      workbenchColors(strongTerminal)["terminal.background"],
-    );
+      expect(quietTerminal.surfaces).toEqual(strongTerminal.surfaces);
+      expect(workbenchColors(quietTerminal)["terminal.background"]).not.toBe(
+        workbenchColors(strongTerminal)["terminal.background"],
+      );
+    }
+  });
+
+  test("terminal contrast levels progress in dark and light modes", () => {
+    for (const mode of modes) {
+      let previousContrast: number | undefined;
+
+      for (const terminal of terminalVariants) {
+        const model = createThemeModel({
+          mode,
+          shade: shadeVariants[2],
+          accentFamily: "amber",
+          dim: dimVariants[1],
+          panels: defaultPanels,
+          terminal,
+          borders: borderVariants[2],
+        });
+        const colors = workbenchColors(model);
+        const contrast = contrastRatio(colors["terminal.background"], model.surfaces.editor);
+
+        if (previousContrast !== undefined) {
+          expect(contrast).toBeGreaterThan(previousContrast);
+        }
+
+        previousContrast = contrast;
+      }
+    }
   });
 });
 
