@@ -5,9 +5,9 @@ local palette = {
 
 local function apply_theme(mode)
   if mode == "dark" then
-    print("Umbra Dark")
+    print("Umbre Dark")
   else
-    print("Umbra Light")
+    print("Umbre Light")
   end
 end
 

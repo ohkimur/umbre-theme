@@ -1,5 +1,5 @@
 import { modes, type Mode } from "@/config.ts";
-import type { UmbraSettings } from "@/runtime/settings.ts";
+import type { UmbreSettings } from "@/runtime/settings.ts";
 import { copyVariantToTheme, readThemeFile, writeThemeFile } from "@/runtime/theme-files.ts";
 import { themeModeFromLabel } from "@/theme/naming.ts";
 import * as vscode from "vscode";
@@ -10,9 +10,9 @@ type PreviewSnapshot = {
 };
 
 export type ThemePreview = {
-  preview(settings: UmbraSettings): void;
+  preview(settings: UmbreSettings): void;
   settle(): Promise<void>;
-  finish(settings: UmbraSettings): Promise<void>;
+  finish(settings: UmbreSettings): Promise<void>;
   cancel(): Promise<void>;
 };
 
@@ -23,7 +23,7 @@ export const createThemePreview = async (): Promise<ThemePreview> => {
   let lastKey = "";
   let previewErrorShown = false;
 
-  const preview = (settings: UmbraSettings): void => {
+  const preview = (settings: UmbreSettings): void => {
     const key = previewKey(snapshot, settings);
     if (key === lastKey) return;
     lastKey = key;
@@ -38,7 +38,7 @@ export const createThemePreview = async (): Promise<ThemePreview> => {
         if (previewErrorShown) return;
         previewErrorShown = true;
         const message = error instanceof Error ? error.message : String(error);
-        await vscode.window.showErrorMessage(`Unable to preview Umbra theme: ${message}`);
+        await vscode.window.showErrorMessage(`Unable to preview Umbre theme: ${message}`);
       });
   };
 
@@ -47,7 +47,7 @@ export const createThemePreview = async (): Promise<ThemePreview> => {
     await queue.catch(() => undefined);
   };
 
-  const finish = async (settings: UmbraSettings): Promise<void> => {
+  const finish = async (settings: UmbreSettings): Promise<void> => {
     await settle();
     await restoreThemeFiles(snapshot, previewTargetMode(snapshot, settings));
   };
@@ -81,11 +81,11 @@ const restoreThemeFiles = async (snapshot: PreviewSnapshot, keepMode?: Mode): Pr
   );
 };
 
-const previewTargetMode = (snapshot: PreviewSnapshot, settings: UmbraSettings): Mode => {
+const previewTargetMode = (snapshot: PreviewSnapshot, settings: UmbreSettings): Mode => {
   return snapshot.activeMode ?? settings.mode;
 };
 
-const previewKey = (snapshot: PreviewSnapshot, settings: UmbraSettings): string =>
+const previewKey = (snapshot: PreviewSnapshot, settings: UmbreSettings): string =>
   [
     previewTargetMode(snapshot, settings),
     settings.mode,

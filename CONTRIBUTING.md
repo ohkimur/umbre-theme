@@ -1,6 +1,6 @@
-# Contributing to Umbra
+# Contributing to Umbre
 
-Thanks for taking the time to improve Umbra. Contributions are welcome, whether they are bug reports, design feedback, documentation updates, or code changes.
+Thanks for taking the time to improve Umbre. Contributions are welcome, whether they are bug reports, design feedback, documentation updates, or code changes.
 
 ## Ways to contribute
 
@@ -11,7 +11,7 @@ Thanks for taking the time to improve Umbra. Contributions are welcome, whether 
 
 ## Development setup
 
-Umbra uses Bun for development.
+Umbre uses Bun for development.
 
 ```bash
 bun install
@@ -25,7 +25,7 @@ Useful local commands:
 ```bash
 bun run dev:code       # build and open a VS Code extension-development window
 bun run dev:cursor     # build and open a Cursor extension-development window
-bun run package        # create umbra-color-theme.vsix from the existing dist/
+bun run package        # create umbre-theme.vsix from the existing dist/
 ```
 
 ## Pull request guidelines
@@ -50,7 +50,7 @@ Add them in GitHub under **Repository → Settings → Secrets and variables →
 ## Project guardrails
 
 - Do not write, rewrite, or clean user/editor settings such as `settings.json`, `workbench.colorCustomizations`, token customizations, or `workbench.colorTheme`.
-- Store configuration through Umbra-owned generated theme files and extension global state.
+- Store configuration through Umbre-owned generated theme files and extension global state.
 - Source theme colors must come from the project color system; do not add manual hex literals in source files.
 - Keep generated artifacts such as `dist/` and `.vsix` packages out of commits.
 

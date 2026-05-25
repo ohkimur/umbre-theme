@@ -59,16 +59,16 @@ jobs:
       - name: Upload VSIX artifact
         uses: actions/upload-artifact@v4
         with:
-          name: umbra-color-theme-vsix
-          path: umbra-color-theme.vsix
+          name: umbre-theme-vsix
+          path: umbre-theme.vsix
           if-no-files-found: error
 
       - name: Publish to Visual Studio Marketplace
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
-        run: bun x vsce publish --packagePath umbra-color-theme.vsix --pat "$VSCE_PAT"
+        run: bun x vsce publish --packagePath umbre-theme.vsix --pat "$VSCE_PAT"
 
       - name: Publish to Open VSX for Cursor-compatible editors
         env:
           OVSX_PAT: ${{ secrets.OVSX_PAT }}
-        run: bun x ovsx publish umbra-color-theme.vsix --pat "$OVSX_PAT"
+        run: bun x ovsx publish umbre-theme.vsix --pat "$OVSX_PAT"

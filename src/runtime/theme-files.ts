@@ -1,5 +1,5 @@
 import type { Mode } from "@/config.ts";
-import type { UmbraSettings } from "@/runtime/settings.ts";
+import type { UmbreSettings } from "@/runtime/settings.ts";
 import { createThemeDocumentFromInput } from "@/theme/create-theme.ts";
 import { themeFileName, themeLabel } from "@/theme/naming.ts";
 import { stringifyJson } from "@/utils/json.ts";
@@ -12,7 +12,7 @@ export const initializeThemeFiles = (context: vscode.ExtensionContext): void => 
 };
 
 export const copyVariantToTheme = async (
-  settings: UmbraSettings,
+  settings: UmbreSettings,
   targetMode: Mode = settings.mode,
 ): Promise<void> => {
   await writeThemeFile(targetMode, encodeTheme(settings));
@@ -29,7 +29,7 @@ export const writeThemeFile = async (mode: Mode, content: Uint8Array): Promise<v
   await vscode.workspace.fs.writeFile(uri, content);
 };
 
-const encodeTheme = (settings: UmbraSettings): Uint8Array => {
+const encodeTheme = (settings: UmbreSettings): Uint8Array => {
   const document = createThemeDocumentFromInput(themeLabel(settings.mode), {
     mode: settings.mode,
     shade: settings.shade,
@@ -48,7 +48,7 @@ const themeUri = (mode: Mode): vscode.Uri => {
 };
 
 const themesUri = (): vscode.Uri => {
-  if (!extensionUri) throw new Error("Umbra theme files were used before activation.");
+  if (!extensionUri) throw new Error("Umbre theme files were used before activation.");
   return vscode.Uri.joinPath(extensionUri, "themes");
 };
 

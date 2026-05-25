@@ -3,7 +3,7 @@ import {
   hasStoredSettings,
   readSettings,
   updateSettings,
-  type UmbraSettings,
+  type UmbreSettings,
 } from "@/runtime/settings.ts";
 import { copyVariantToTheme, initializeThemeFiles } from "@/runtime/theme-files.ts";
 import { themeLabel, themeModeFromLabel } from "@/theme/naming.ts";
@@ -20,7 +20,7 @@ export const initializeThemeApplication = (context: vscode.ExtensionContext): vo
 
 export const isApplyingSettings = (): boolean => applyingSettings;
 
-export const applySettings = (settings: UmbraSettings = readSettings()): Promise<string> => {
+export const applySettings = (settings: UmbreSettings = readSettings()): Promise<string> => {
   const request = ++latestApplyRequest;
   const next = applyQueue.then(() => {
     if (request !== latestApplyRequest) return themeLabel(settings.mode);
@@ -31,7 +31,7 @@ export const applySettings = (settings: UmbraSettings = readSettings()): Promise
 };
 
 export const applySettingsIfActive = async (): Promise<void> => {
-  const mode = activeUmbraMode();
+  const mode = activeUmbreMode();
   if (!mode) return;
 
   const stored = hasStoredSettings();
@@ -40,7 +40,7 @@ export const applySettingsIfActive = async (): Promise<void> => {
   await applySettings(settings);
 };
 
-const applySettingsNow = async (settings: UmbraSettings): Promise<string> => {
+const applySettingsNow = async (settings: UmbreSettings): Promise<string> => {
   const label = themeLabel(settings.mode);
   const generation = ++applyGeneration;
 
@@ -56,15 +56,15 @@ const applySettingsNow = async (settings: UmbraSettings): Promise<string> => {
   return label;
 };
 
-const copySettingsToActiveTheme = async (settings: UmbraSettings): Promise<void> => {
-  const activeMode = activeUmbraMode();
-  const targetModes = new Set<UmbraSettings["mode"]>([settings.mode]);
+const copySettingsToActiveTheme = async (settings: UmbreSettings): Promise<void> => {
+  const activeMode = activeUmbreMode();
+  const targetModes = new Set<UmbreSettings["mode"]>([settings.mode]);
   if (activeMode) targetModes.add(activeMode);
 
   await Promise.all([...targetModes].map((mode) => copyVariantToTheme(settings, mode)));
 };
 
-const activeUmbraMode = () => {
+const activeUmbreMode = () => {
   const activeTheme = vscode.workspace.getConfiguration("workbench").get<string>("colorTheme", "");
   return themeModeFromLabel(activeTheme);
 };

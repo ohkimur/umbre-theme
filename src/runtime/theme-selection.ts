@@ -4,10 +4,10 @@ import { readSettings, updateSettings } from "@/runtime/settings.ts";
 import { themeModeFromLabel } from "@/theme/naming.ts";
 import * as vscode from "vscode";
 
-export const applySelectedUmbraTheme = async (): Promise<boolean> => {
+export const applySelectedUmbreTheme = async (): Promise<boolean> => {
   if (isApplyingSettings()) return false;
 
-  const mode = selectedUmbraMode();
+  const mode = selectedUmbreMode();
   if (!mode) return false;
 
   const current = readSettings();
@@ -25,7 +25,7 @@ export const isThemeSelectionChange = (event: vscode.ConfigurationChangeEvent): 
   return event.affectsConfiguration("workbench.colorTheme");
 };
 
-const selectedUmbraMode = () => {
+const selectedUmbreMode = () => {
   const theme = vscode.workspace.getConfiguration("workbench").get<string>("colorTheme", "");
   return themeModeFromLabel(theme);
 };

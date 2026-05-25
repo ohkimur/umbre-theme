@@ -6,13 +6,13 @@ export type CommandContribution = {
 
 export const commandContributions = (): CommandContribution[] => [
   {
-    command: "umbra.configure",
+    command: "umbre.configure",
     title: "Configure Theme",
-    category: "Umbra",
+    category: "Umbre",
   },
   {
-    command: "umbra.toggleMode",
+    command: "umbre.toggleMode",
     title: "Toggle Opposite Dark/Light Mode",
-    category: "Umbra",
+    category: "Umbre",
   },
 ];

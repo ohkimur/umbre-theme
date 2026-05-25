@@ -23,7 +23,7 @@ import {
 } from "@/config.ts";
 import * as vscode from "vscode";
 
-export type UmbraSettings = {
+export type UmbreSettings = {
   mode: Mode;
   shade: ShadeVariant;
   accent: AccentFamily;
@@ -33,7 +33,7 @@ export type UmbraSettings = {
   borders: BorderVariant;
 };
 
-type StoredUmbraSettings = {
+type StoredUmbreSettings = {
   mode?: unknown;
   shade?: unknown;
   accent?: unknown;
@@ -43,14 +43,14 @@ type StoredUmbraSettings = {
   borders?: unknown;
 };
 
-const storageKey = "umbra.themeSettings";
+const storageKey = "umbre.themeSettings";
 let state: vscode.Memento | undefined;
 
 export const initializeSettings = (context: vscode.ExtensionContext): void => {
   state = context.globalState;
 };
 
-export const defaultSettings = (mode: Mode = defaultMode): UmbraSettings => ({
+export const defaultSettings = (mode: Mode = defaultMode): UmbreSettings => ({
   mode,
   shade: defaultShadeForMode(mode),
   accent: defaultAccent,
@@ -60,10 +60,10 @@ export const defaultSettings = (mode: Mode = defaultMode): UmbraSettings => ({
   borders: defaultBorders,
 });
 
-export const hasStoredSettings = (): boolean => state?.get<StoredUmbraSettings>(storageKey) !== undefined;
+export const hasStoredSettings = (): boolean => state?.get<StoredUmbreSettings>(storageKey) !== undefined;
 
-export const readSettings = (): UmbraSettings => {
-  const stored = state?.get<StoredUmbraSettings>(storageKey);
+export const readSettings = (): UmbreSettings => {
+  const stored = state?.get<StoredUmbreSettings>(storageKey);
   const mode = parseMode(stored?.mode);
 
   return {
@@ -77,7 +77,7 @@ export const readSettings = (): UmbraSettings => {
   };
 };
 
-export const updateSettings = async (settings: UmbraSettings): Promise<void> => {
+export const updateSettings = async (settings: UmbreSettings): Promise<void> => {
   await state?.update(storageKey, {
     mode: settings.mode,
     shade: settings.shade.id,
@@ -86,7 +86,7 @@ export const updateSettings = async (settings: UmbraSettings): Promise<void> => 
     panels: settings.panels.id,
     terminal: settings.terminal.id,
     borders: settings.borders.id,
-  } satisfies StoredUmbraSettings);
+  } satisfies StoredUmbreSettings);
 };
 
 const parseMode = (value: unknown): Mode => {

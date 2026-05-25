@@ -28,7 +28,7 @@ export const buildExtension = async (): Promise<void> => {
   await copyFile(readmePath, new URL("README.md", distDir));
   await copyFile(licensePath, new URL("LICENSE", distDir));
 
-  console.log(`Built ${themes.length} Umbra themes in ${distDir.pathname}`);
+  console.log(`Built ${themes.length} Umbre themes in ${distDir.pathname}`);
 };
 
 const resetDist = async (): Promise<void> => {

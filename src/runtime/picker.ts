@@ -20,7 +20,7 @@ import {
   type ShadeVariant,
   type TerminalVariant,
 } from "@/config.ts";
-import type { UmbraSettings } from "@/runtime/settings.ts";
+import type { UmbreSettings } from "@/runtime/settings.ts";
 import { titleCase } from "@/utils/text.ts";
 import { debounce } from "es-toolkit";
 import * as vscode from "vscode";
@@ -40,12 +40,12 @@ type ConfigurationTarget =
   | "panels"
   | "terminal"
   | "borders";
-type PreviewSettings = (settings: UmbraSettings) => void;
+type PreviewSettings = (settings: UmbreSettings) => void;
 
 export const pickSettings = async (
-  current: UmbraSettings,
+  current: UmbreSettings,
   previewSettings?: PreviewSettings,
-): Promise<UmbraSettings | undefined> => {
+): Promise<UmbreSettings | undefined> => {
   const target = await pickConfigurationTarget(current);
   if (!target) return undefined;
 
@@ -54,13 +54,13 @@ export const pickSettings = async (
   return pickSingleSetting(current, target, previewSettings);
 };
 
-const pickConfigurationTarget = async (current: UmbraSettings): Promise<ConfigurationTarget | undefined> => {
+const pickConfigurationTarget = async (current: UmbreSettings): Promise<ConfigurationTarget | undefined> => {
   return pickValue(
     [
       {
         label: "Configure all",
         description: "Guided setup",
-        detail: "Step through all Umbra theme controls.",
+        detail: "Step through all Umbre theme controls.",
         value: "all",
       },
       {
@@ -72,7 +72,7 @@ const pickConfigurationTarget = async (current: UmbraSettings): Promise<Configur
       {
         label: "Mode",
         description: titleCase(current.mode),
-        detail: "Switch between Umbra Dark and Umbra Light.",
+        detail: "Switch between Umbre Dark and Umbre Light.",
         value: "mode",
       },
       {
@@ -112,15 +112,15 @@ const pickConfigurationTarget = async (current: UmbraSettings): Promise<Configur
         value: "borders",
       },
     ],
-    "Umbra: what would you like to configure?",
+    "Umbre: what would you like to configure?",
   );
 };
 
 const pickSingleSetting = async (
-  current: UmbraSettings,
+  current: UmbreSettings,
   target: Exclude<ConfigurationTarget, "all" | "recommended">,
   previewSettings?: PreviewSettings,
-): Promise<UmbraSettings | undefined> => {
+): Promise<UmbreSettings | undefined> => {
   switch (target) {
     case "mode": {
       const mode = await pickMode(current, previewSettings);
@@ -154,9 +154,9 @@ const pickSingleSetting = async (
 };
 
 const pickAllSettings = async (
-  current: UmbraSettings,
+  current: UmbreSettings,
   previewSettings?: PreviewSettings,
-): Promise<UmbraSettings | undefined> => {
+): Promise<UmbreSettings | undefined> => {
   const mode = await pickMode(current, previewSettings);
   if (!mode) return undefined;
   const withMode = { ...current, mode, shade: defaultShadeForMode(mode) };
@@ -187,7 +187,7 @@ const pickAllSettings = async (
   return { ...withTerminal, borders };
 };
 
-const recommendedSettings = (mode: Mode): UmbraSettings => ({
+const recommendedSettings = (mode: Mode): UmbreSettings => ({
   mode,
   shade: defaultShadeForMode(mode),
   accent: defaultAccent,
@@ -198,24 +198,24 @@ const recommendedSettings = (mode: Mode): UmbraSettings => ({
 });
 
 const pickMode = async (
-  current: UmbraSettings,
+  current: UmbreSettings,
   previewSettings?: PreviewSettings,
 ): Promise<Mode | undefined> => {
   return pickValue(
     modes.map((mode) => ({
       label: itemLabel(titleCase(mode), current.mode === mode),
-      description: mode === "dark" ? "Umbra Dark" : "Umbra Light",
+      description: mode === "dark" ? "Umbre Dark" : "Umbre Light",
       value: mode,
       current: current.mode === mode,
     })),
-    "Umbra: select mode",
+    "Umbre: select mode",
     (mode) => ({ ...current, mode, shade: defaultShadeForMode(mode) }),
     previewSettings,
   );
 };
 
 const pickShade = async (
-  current: UmbraSettings,
+  current: UmbreSettings,
   previewSettings?: PreviewSettings,
 ): Promise<ShadeVariant | undefined> => {
   const noun = current.mode === "dark" ? "darkness" : "lightness";
@@ -228,14 +228,14 @@ const pickShade = async (
       value: shade,
       current: current.shade.id === shade.id,
     })),
-    `Umbra: select ${noun} level`,
+    `Umbre: select ${noun} level`,
     (shade) => ({ ...current, shade }),
     previewSettings,
   );
 };
 
 const pickAccent = async (
-  current: UmbraSettings,
+  current: UmbreSettings,
   previewSettings?: PreviewSettings,
 ): Promise<AccentFamily | undefined> => {
   return pickValue(
@@ -245,14 +245,14 @@ const pickAccent = async (
       value: accent,
       current: current.accent === accent,
     })),
-    "Umbra: select accent",
+    "Umbre: select accent",
     (accent) => ({ ...current, accent }),
     previewSettings,
   );
 };
 
 const pickDimming = async (
-  current: UmbraSettings,
+  current: UmbreSettings,
   previewSettings?: PreviewSettings,
 ): Promise<DimVariant | undefined> => {
   return pickValue(
@@ -263,14 +263,14 @@ const pickDimming = async (
       value: dim,
       current: current.dim.id === dim.id,
     })),
-    "Umbra: select editor dimming",
+    "Umbre: select editor dimming",
     (dim) => ({ ...current, dim }),
     previewSettings,
   );
 };
 
 const pickPanels = async (
-  current: UmbraSettings,
+  current: UmbreSettings,
   previewSettings?: PreviewSettings,
 ): Promise<PanelVariant | undefined> => {
   return pickValue(
@@ -281,14 +281,14 @@ const pickPanels = async (
       value: panels,
       current: current.panels.id === panels.id,
     })),
-    "Umbra: select panel contrast",
+    "Umbre: select panel contrast",
     (panels) => ({ ...current, panels }),
     previewSettings,
   );
 };
 
 const pickTerminal = async (
-  current: UmbraSettings,
+  current: UmbreSettings,
   previewSettings?: PreviewSettings,
 ): Promise<TerminalVariant | undefined> => {
   return pickValue(
@@ -299,14 +299,14 @@ const pickTerminal = async (
       value: terminal,
       current: current.terminal.id === terminal.id,
     })),
-    "Umbra: select terminal contrast",
+    "Umbre: select terminal contrast",
     (terminal) => ({ ...current, terminal }),
     previewSettings,
   );
 };
 
 const pickBorders = async (
-  current: UmbraSettings,
+  current: UmbreSettings,
   previewSettings?: PreviewSettings,
 ): Promise<BorderVariant | undefined> => {
   return pickValue(
@@ -317,7 +317,7 @@ const pickBorders = async (
       value: borders,
       current: current.borders.id === borders.id,
     })),
-    "Umbra: select border intensity",
+    "Umbre: select border intensity",
     (borders) => ({ ...current, borders }),
     previewSettings,
   );
@@ -326,7 +326,7 @@ const pickBorders = async (
 const pickValue = async <Value>(
   items: PickItem<Value>[],
   title: string,
-  preview?: (value: Value) => UmbraSettings,
+  preview?: (value: Value) => UmbreSettings,
   previewSettings?: PreviewSettings,
 ): Promise<Value | undefined> => {
   const picker = vscode.window.createQuickPick<PickItem<Value>>();

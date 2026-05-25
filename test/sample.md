@@ -1,4 +1,4 @@
-# Umbra sample
+# Umbre sample
 
 > A tiny markdown surface for checking markup scopes.
 

@@ -1,9 +1,9 @@
 export const extension = {
-  name: "umbra-color-theme",
-  displayName: "Umbra",
+  name: "umbre-theme",
+  displayName: "Umbre",
   publisher: "ohkimur",
   version: "0.1.0",
-  id: "ohkimur.umbra-color-theme",
+  id: "ohkimur.umbre-theme",
 } as const;
 
 export const modes = ["dark", "light"] as const;
@@ -129,7 +129,7 @@ export const panelVariants = [
     id: "4",
     level: 4,
     label: "Defined panels",
-    detail: "Clearer sidebars and bottom panels; the default Umbra balance.",
+    detail: "Clearer sidebars and bottom panels; the default Umbre balance.",
     surfaceContrast: 1,
   },
   {
@@ -168,7 +168,7 @@ export const terminalVariants = [
     id: "4",
     level: 4,
     label: "Clear terminal",
-    detail: "Strong terminal separation; the default Umbra balance.",
+    detail: "Strong terminal separation; the default Umbre balance.",
     backgroundMix: 0.75,
   },
   {

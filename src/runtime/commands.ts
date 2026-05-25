@@ -2,21 +2,21 @@ import { defaultShadeForMode } from "@/config.ts";
 import { applySettings } from "@/runtime/apply.ts";
 import { pickSettings } from "@/runtime/picker.ts";
 import { createThemePreview } from "@/runtime/preview.ts";
-import { readSettings, updateSettings, type UmbraSettings } from "@/runtime/settings.ts";
+import { readSettings, updateSettings, type UmbreSettings } from "@/runtime/settings.ts";
 import { themeModeFromLabel } from "@/theme/naming.ts";
 import * as vscode from "vscode";
 
 export const registerCommands = (context: vscode.ExtensionContext): void => {
   context.subscriptions.push(
-    vscode.commands.registerCommand("umbra.configure", configureTheme),
-    vscode.commands.registerCommand("umbra.toggleMode", toggleMode),
+    vscode.commands.registerCommand("umbre.configure", configureTheme),
+    vscode.commands.registerCommand("umbre.toggleMode", toggleMode),
   );
 };
 
 const configureTheme = async (): Promise<void> => {
   const activeMode = currentColorThemeMode();
   const preview = await createThemePreview();
-  let picked: UmbraSettings | undefined;
+  let picked: UmbreSettings | undefined;
   let previewFinished = false;
 
   try {
@@ -37,7 +37,7 @@ const configureTheme = async (): Promise<void> => {
 const toggleMode = async (): Promise<void> => {
   const current = readSettings();
   const mode = current.mode === "dark" ? "light" : "dark";
-  const next: UmbraSettings = {
+  const next: UmbreSettings = {
     ...current,
     mode,
     shade: defaultShadeForMode(mode),
@@ -55,15 +55,15 @@ const currentColorThemeMode = () => {
 
 const showAppliedMessage = async (
   label: string,
-  activeMode: UmbraSettings["mode"] | undefined,
-  appliedMode: UmbraSettings["mode"],
+  activeMode: UmbreSettings["mode"] | undefined,
+  appliedMode: UmbreSettings["mode"],
 ): Promise<void> => {
   if (activeMode === appliedMode) {
-    await vscode.window.showInformationMessage(`Umbra theme applied: ${label}`);
+    await vscode.window.showInformationMessage(`Umbre theme applied: ${label}`);
     return;
   }
 
   await vscode.window.showInformationMessage(
-    `Umbra configured: ${label}. Select ${label} in Preferences: Color Theme to switch modes.`,
+    `Umbre configured: ${label}. Select ${label} in Preferences: Color Theme to switch modes.`,
   );
 };

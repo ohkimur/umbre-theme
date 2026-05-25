@@ -1,7 +1,7 @@
 import { applySettingsIfActive, initializeThemeApplication } from "@/runtime/apply.ts";
 import { registerCommands } from "@/runtime/commands.ts";
 import { initializeSettings } from "@/runtime/settings.ts";
-import { applySelectedUmbraTheme, isThemeSelectionChange } from "@/runtime/theme-selection.ts";
+import { applySelectedUmbreTheme, isThemeSelectionChange } from "@/runtime/theme-selection.ts";
 import * as vscode from "vscode";
 
 export const activate = (context: vscode.ExtensionContext): void => {
@@ -18,8 +18,8 @@ export const activate = (context: vscode.ExtensionContext): void => {
 };
 
 const applyAndConfigureSelectedTheme = async (): Promise<void> => {
-  const applied = await applySelectedUmbraTheme();
-  if (applied) await vscode.commands.executeCommand("umbra.configure");
+  const applied = await applySelectedUmbreTheme();
+  if (applied) await vscode.commands.executeCommand("umbre.configure");
 };
 
 export const deactivate = (): void => undefined;

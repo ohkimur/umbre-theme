@@ -35,12 +35,12 @@ const expectedVariantCount =
 const validatedCoreVariantCount =
   modes.length * shadeVariants.length * accentFamilies.length * dimVariants.length * borderVariants.length;
 
-describe("Umbra generated theme inventory", () => {
+describe("Umbre generated theme inventory", () => {
   test("contributes only the two picker themes", () => {
     const themes = createThemes();
 
     expect(themes).toHaveLength(2);
-    expect(themes.map((theme) => theme.contribution.label)).toEqual(["Umbra Dark", "Umbra Light"]);
+    expect(themes.map((theme) => theme.contribution.label)).toEqual(["Umbre Dark", "Umbre Light"]);
     expect(themes.every((theme) => theme.contribution._watch)).toBe(true);
   });
 
@@ -50,7 +50,7 @@ describe("Umbra generated theme inventory", () => {
   });
 });
 
-describe("Umbra recommended defaults", () => {
+describe("Umbre recommended defaults", () => {
   test("use balanced levels with quieter borders", () => {
     expect(defaultDarkShade.level).toBe(3);
     expect(defaultLightShade.level).toBe(3);
@@ -61,7 +61,7 @@ describe("Umbra recommended defaults", () => {
   });
 });
 
-describe("Umbra surface recipes", () => {
+describe("Umbre surface recipes", () => {
   test("shade levels move progressively farther from paper white", () => {
     for (const mode of modes) {
       let previousContrast: number | undefined;
@@ -236,7 +236,7 @@ describe("Umbra surface recipes", () => {
   });
 });
 
-describe("Umbra variant colors", () => {
+describe("Umbre variant colors", () => {
   test("core generated variants include valid workbench, token, semantic, and border colors", () => {
     let variantCount = 0;
 
@@ -278,7 +278,7 @@ describe("Umbra variant colors", () => {
   });
 });
 
-describe("Umbra source hygiene", () => {
+describe("Umbre source hygiene", () => {
   test("source files do not contain manual hex literals", async () => {
     const files = await sourceFiles(new URL("../../src/", import.meta.url));
     const hexLiteral = /#(?:[\dA-Fa-f]{3,8})\b/;

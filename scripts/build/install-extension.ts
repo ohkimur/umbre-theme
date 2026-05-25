@@ -39,7 +39,7 @@ export const installExtension = async (args: string[] = []): Promise<void> => {
   for (const editor of targets) {
     await runCommand(editor.command, ["--install-extension", vsixPath.pathname, "--force"]);
     console.log(
-      `Installed Umbra in ${editor.label}. Reload open ${editor.label} windows to activate this build.`,
+      `Installed Umbre in ${editor.label}. Reload open ${editor.label} windows to activate this build.`,
     );
     await suggestSymbols(editor, shouldPromptForIcons);
   }
@@ -49,7 +49,7 @@ const requirePackagedVsix = async (): Promise<void> => {
   try {
     await access(vsixPath);
   } catch {
-    throw new Error("umbra-color-theme.vsix was not found. Run `bun run package` before installing.");
+    throw new Error("umbre-theme.vsix was not found. Run `bun run package` before installing.");
   }
 };
 
@@ -95,7 +95,7 @@ const promptForEditors = async (editorStates: EditorState[]): Promise<EditorId[]
   }
 
   const selected = await checkbox<EditorId>({
-    message: "Install Umbra in which editor?",
+    message: "Install Umbre in which editor?",
     required: true,
     choices,
   });
@@ -130,7 +130,7 @@ const suggestSymbols = async (editor: Editor, shouldPrompt: boolean): Promise<vo
   }
 
   console.log(
-    `Tip: pair Umbra with ${symbolsExtension.label}: ${editor.command} --install-extension ${symbolsExtension.id}`,
+    `Tip: pair Umbre with ${symbolsExtension.label}: ${editor.command} --install-extension ${symbolsExtension.id}`,
   );
 };
 

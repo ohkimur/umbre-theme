@@ -40,7 +40,7 @@ export const createExtensionManifest = (themes: ThemeContribution[]): ExtensionM
   type: "module",
   main: "./extension.js",
   icon: "assets/logo.png",
-  activationEvents: ["onCommand:umbra.configure", "onCommand:umbra.toggleMode", "onStartupFinished"],
+  activationEvents: ["onCommand:umbre.configure", "onCommand:umbre.toggleMode", "onStartupFinished"],
   repository: {
     type: "git",
     url: "https://github.com/ohkimur/umbra-theme.git",
@@ -51,7 +51,7 @@ export const createExtensionManifest = (themes: ThemeContribution[]): ExtensionM
     vscode: "^1.100.0",
   },
   categories: ["Themes"],
-  keywords: ["theme", "dark theme", "light theme", "black", "umbra"],
+  keywords: ["theme", "dark theme", "light theme", "black", "umbre"],
   contributes: {
     commands: commandContributions(),
     themes,
