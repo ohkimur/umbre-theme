@@ -1,7 +1,7 @@
 import { access } from "node:fs/promises";
 
+import { product } from "@/product.ts";
 import { runCommand } from "@/utils/process.ts";
-import { checkbox, confirm } from "@inquirer/prompts";
 import { vsixPath } from "@scripts/build/paths.ts";
 import { execa } from "execa";
 
@@ -29,19 +29,21 @@ type EditorState = Editor & {
 };
 
 export const installExtension = async (args: string[] = []): Promise<void> => {
-  const requestedTargets = selectedEditors(args);
+  const targetIds = selectedEditors(args);
+  if (targetIds.length === 0) {
+    throw new Error("Choose where to install with --cursor, --code, --vscode, or --all.");
+  }
+
   const editorStates = await detectEditors();
-  const targetIds = requestedTargets.length > 0 ? requestedTargets : await promptForEditors(editorStates);
   const targets = targetIds.map((id) => requireAvailableEditor(id, editorStates));
   await requirePackagedVsix();
-  const shouldPromptForIcons = requestedTargets.length === 0 && process.stdout.isTTY;
 
   for (const editor of targets) {
     await runCommand(editor.command, ["--install-extension", vsixPath.pathname, "--force"]);
     console.log(
-      `Installed Umbre in ${editor.label}. Reload open ${editor.label} windows to activate this build.`,
+      `Installed ${product.displayName} in ${editor.label}. Reload open ${editor.label} windows to activate this build.`,
     );
-    await suggestSymbols(editor, shouldPromptForIcons);
+    await suggestSymbols(editor);
   }
 };
 
@@ -49,7 +51,7 @@ const requirePackagedVsix = async (): Promise<void> => {
   try {
     await access(vsixPath);
   } catch {
-    throw new Error("umbre-theme.vsix was not found. Run `bun run package` before installing.");
+    throw new Error(`${vsixPath.pathname} was not found. Run \`bun run package\` before installing.`);
   }
 };
 
@@ -80,29 +82,6 @@ const detectEditors = async (): Promise<EditorState[]> => {
   );
 };
 
-const promptForEditors = async (editorStates: EditorState[]): Promise<EditorId[]> => {
-  const choices = editorStates
-    .filter((editor) => editor.available)
-    .map((editor) => ({
-      name: editor.label,
-      value: editor.id,
-    }));
-
-  if (choices.length === 0) {
-    throw new Error(
-      "No supported editor CLI was found. Install the `cursor` or `code` command and try again.",
-    );
-  }
-
-  const selected = await checkbox<EditorId>({
-    message: "Install Umbre in which editor?",
-    required: true,
-    choices,
-  });
-
-  return [...selected];
-};
-
 const requireAvailableEditor = (id: EditorId, editorStates: EditorState[]): EditorState => {
   const editor = editorStates.find((state) => state.id === id);
   if (!editor?.available) {
@@ -113,24 +92,11 @@ const requireAvailableEditor = (id: EditorId, editorStates: EditorState[]): Edit
   return editor;
 };
 
-const suggestSymbols = async (editor: Editor, shouldPrompt: boolean): Promise<void> => {
+const suggestSymbols = async (editor: Editor): Promise<void> => {
   if (await hasExtension(editor.command, symbolsExtension.id)) return;
 
-  if (shouldPrompt) {
-    const shouldInstall = await confirm({
-      message: `Install ${symbolsExtension.label} for ${editor.label}?`,
-      default: true,
-    });
-
-    if (shouldInstall) {
-      await runCommand(editor.command, ["--install-extension", symbolsExtension.id]);
-      console.log(`Installed ${symbolsExtension.label} in ${editor.label}.`);
-      return;
-    }
-  }
-
   console.log(
-    `Tip: pair Umbre with ${symbolsExtension.label}: ${editor.command} --install-extension ${symbolsExtension.id}`,
+    `Tip: pair ${product.displayName} with ${symbolsExtension.label}: ${editor.command} --install-extension ${symbolsExtension.id}`,
   );
 };
 
