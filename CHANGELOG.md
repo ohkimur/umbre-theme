@@ -1,3 +1,9 @@
+## 0.3.0 (2026-05-26)
+
+### Features
+
+- show commands only when Umbre is active ([9b315e7](https://github.com/ohkimur/umbre-theme/commit/9b315e748f2ac22362c031f28816fdf70b445746))
+
 ## 0.2.0 (2026-05-26)
 
 ### Features
