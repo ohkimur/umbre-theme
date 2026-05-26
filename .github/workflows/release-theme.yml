@@ -1,4 +1,4 @@
-name: Publish Umbre theme
+name: Release Theme
 
 on:
   push:
@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: publish-theme-${{ github.ref }}
+  group: release-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -34,12 +34,6 @@ jobs:
 
       - name: Test
         run: bun run test
-
-      - name: Seed local 0.x baseline
-        run: |
-          if ! git tag --list 'v*' | grep -q .; then
-            git tag v0.0.0 "$(git rev-list --max-parents=0 HEAD)"
-          fi
 
       - name: Release
         env:
