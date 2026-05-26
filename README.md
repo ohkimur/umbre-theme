@@ -12,6 +12,10 @@
   <strong>Dark and light themes with simple built-in customization.</strong>
 </p>
 
+<p align="center">
+  <img src="./assets/screenshots.png" alt="Umbre theme screenshot">
+</p>
+
 ---
 
 Umbre includes **Umbre Dark** and **Umbre Light**. The defaults are calm and low contrast, but you can tune the theme from the Command Palette without editing JSON or adding color overrides to your settings.
