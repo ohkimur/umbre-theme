@@ -14,7 +14,7 @@ export const registerCommands = (context: vscode.ExtensionContext): void => {
   context.subscriptions.push(
     vscode.commands.registerCommand(commandIds.configure, configureTheme),
     vscode.commands.registerCommand(commandIds.toggleOpposite, toggleOppositeTheme),
-    vscode.commands.registerCommand(commandIds.chooseFont, chooseRecommendedFont),
+    vscode.commands.registerCommand(commandIds.chooseFont, chooseFont),
   );
 };
 
@@ -23,6 +23,7 @@ type ConfigureThemeOptions = {
 };
 
 const configureTheme = async (options: ConfigureThemeOptions = {}): Promise<void> => {
+  if (!(await ensureActiveUmbreTheme())) return;
   const wasActiveTheme = isActiveUmbreTheme();
   let preview: Awaited<ReturnType<typeof createThemePreview>> | undefined;
   let picked: UmbreSettings | undefined;
@@ -50,6 +51,7 @@ const configureTheme = async (options: ConfigureThemeOptions = {}): Promise<void
 };
 
 const toggleOppositeTheme = async (): Promise<void> => {
+  if (!(await ensureActiveUmbreTheme())) return;
   const wasActiveTheme = isActiveUmbreTheme();
   const current = readSettings();
 
@@ -76,10 +78,26 @@ const toggleOppositeTheme = async (): Promise<void> => {
   await showAppliedMessage(label, wasActiveTheme);
 };
 
+const chooseFont = async (): Promise<void> => {
+  if (!(await ensureActiveUmbreTheme())) return;
+  await chooseRecommendedFont();
+};
+
 const systemAwareSettings = async (current: UmbreSettings): Promise<UmbreSettings> => {
   const mode = (await detectSystemMode()) ?? current.mode;
   if (current.mode === mode) return { ...current, systemAware: true };
   return { ...oppositeSettings(current), mode, systemAware: true };
+};
+
+const ensureActiveUmbreTheme = async (): Promise<boolean> => {
+  if (isActiveUmbreTheme()) return true;
+
+  const action = await vscode.window.showInformationMessage(
+    `${product.displayName} settings are available after you select the ${product.displayName} theme.`,
+    "Select Theme",
+  );
+  if (action === "Select Theme") await vscode.commands.executeCommand("workbench.action.selectTheme");
+  return false;
 };
 
 const isActiveUmbreTheme = (): boolean => {

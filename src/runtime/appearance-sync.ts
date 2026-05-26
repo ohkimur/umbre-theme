@@ -13,6 +13,7 @@ import { isThemeLabel, themeModeFromLabel } from "@/theme/naming.ts";
 import * as vscode from "vscode";
 
 const pollIntervalMs = 2000;
+const activeThemeContextKey = "umbre.active";
 
 let suspended = false;
 let syncing = false;
@@ -32,6 +33,7 @@ export const initializeAppearanceSync = (
   options: AppearanceSyncOptions = {},
 ): void => {
   void rememberSystemMode();
+  void updateActiveThemeContext();
   void syncActiveUmbreTheme();
 
   const interval = setInterval(() => {
@@ -41,6 +43,7 @@ export const initializeAppearanceSync = (
   context.subscriptions.push(
     vscode.workspace.onDidChangeConfiguration((event) => {
       if (!event.affectsConfiguration("workbench.colorTheme")) return;
+      void updateActiveThemeContext();
       if (!isActiveUmbreTheme()) return;
 
       void syncActiveUmbreTheme();
@@ -102,6 +105,10 @@ const persistIfChanged = async (settings: UmbreSettings): Promise<void> => {
 
 const rememberSystemMode = async (): Promise<void> => {
   lastSystemMode = await detectSystemMode();
+};
+
+const updateActiveThemeContext = (): Thenable<void> => {
+  return vscode.commands.executeCommand("setContext", activeThemeContextKey, isActiveUmbreTheme());
 };
 
 const isActiveUmbreTheme = (): boolean => isThemeLabel(activeThemeLabel());

@@ -99,8 +99,16 @@ const createExtensionManifest = (
     menus: {
       commandPalette: [
         {
+          command: commandIds.configure,
+          when: "umbre.active",
+        },
+        {
           command: commandIds.toggleOpposite,
-          when: "!umbre.systemAware",
+          when: "umbre.active && !umbre.systemAware",
+        },
+        {
+          command: commandIds.chooseFont,
+          when: "umbre.active",
         },
       ],
     },
