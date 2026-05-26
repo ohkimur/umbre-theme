@@ -6,7 +6,7 @@ import {
   type UmbreSettings,
 } from "@/runtime/settings.ts";
 import { copyVariantToTheme, initializeThemeFiles } from "@/runtime/theme-files.ts";
-import { themeLabel, themeModeFromLabel } from "@/theme/naming.ts";
+import { isThemeLabel, themeLabel } from "@/theme/naming.ts";
 import * as vscode from "vscode";
 
 let applyingSettings = false;
@@ -31,11 +31,10 @@ export const applySettings = (settings: UmbreSettings = readSettings()): Promise
 };
 
 export const applySettingsIfActive = async (): Promise<void> => {
-  const mode = activeUmbreMode();
-  if (!mode) return;
+  if (!isActiveUmbreTheme()) return;
 
   const stored = hasStoredSettings();
-  const settings = stored ? readSettings() : defaultSettings(mode);
+  const settings = stored ? readSettings() : defaultSettings();
   if (!stored) await updateSettings(settings);
   await applySettings(settings);
 };
@@ -57,14 +56,10 @@ const applySettingsNow = async (settings: UmbreSettings): Promise<string> => {
 };
 
 const copySettingsToActiveTheme = async (settings: UmbreSettings): Promise<void> => {
-  const activeMode = activeUmbreMode();
-  const targetModes = new Set<UmbreSettings["mode"]>([settings.mode]);
-  if (activeMode) targetModes.add(activeMode);
-
-  await Promise.all([...targetModes].map((mode) => copyVariantToTheme(settings, mode)));
+  await copyVariantToTheme(settings);
 };
 
-const activeUmbreMode = () => {
+const isActiveUmbreTheme = (): boolean => {
   const activeTheme = vscode.workspace.getConfiguration("workbench").get<string>("colorTheme", "");
-  return themeModeFromLabel(activeTheme);
+  return isThemeLabel(activeTheme);
 };

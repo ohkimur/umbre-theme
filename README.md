@@ -18,7 +18,7 @@
 
 ---
 
-Umbre includes **Umbre Dark** and **Umbre Light**. It is calm by default, but you can tune the whole theme from the Command Palette without editing JSON or adding color overrides to your settings.
+Umbre is one calm theme with built-in light, balanced, and dark configurations. You can tune the whole theme from the Command Palette without editing JSON or adding color overrides to your settings.
 
 It also includes three recommended presets:
 
@@ -33,7 +33,7 @@ Umbre is published on:
 - [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=ohkimur.umbre-theme)
 - [Open VSX](https://open-vsx.org/extension/ohkimur/umbre-theme)
 
-After installing, open **Preferences: Color Theme** and choose **Umbre Dark** or **Umbre Light**.
+After installing, open **Preferences: Color Theme** and choose **Umbre**. The configuration picker opens when Umbre is selected.
 
 Umbre pairs well with [Symbols](https://marketplace.visualstudio.com/items?itemName=miguelsolorio.symbols), a simple file icon theme that works in both VS Code and Cursor. After installation, Umbre can help you install Symbols and open the icon theme picker.
 

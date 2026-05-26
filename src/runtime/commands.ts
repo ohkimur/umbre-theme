@@ -15,7 +15,11 @@ export const registerCommands = (context: vscode.ExtensionContext): void => {
   );
 };
 
-const configureTheme = async (): Promise<void> => {
+type ConfigureThemeOptions = {
+  target?: "all";
+};
+
+const configureTheme = async (options: ConfigureThemeOptions = {}): Promise<void> => {
   const activeMode = currentColorThemeMode();
   let preview: Awaited<ReturnType<typeof createThemePreview>> | undefined;
   let picked: UmbreSettings | undefined;
@@ -24,7 +28,11 @@ const configureTheme = async (): Promise<void> => {
   setAppearanceSyncSuspended(true);
   try {
     preview = await createThemePreview();
-    picked = await pickSettings(readSettings(), preview.preview);
+    const current = readSettings();
+    picked =
+      options.target === "all"
+        ? await pickSettings(current, preview.preview, "all")
+        : await pickSettings(current, preview.preview);
     if (!picked) return;
 
     await preview.finish(picked);

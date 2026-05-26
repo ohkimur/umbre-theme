@@ -37,17 +37,17 @@ const validatedCoreVariantCount =
   modes.length * shadeVariants.length * accentFamilies.length * dimVariants.length * borderVariants.length;
 
 describe("Umbre generated theme inventory", () => {
-  test("contributes only the two picker themes", () => {
+  test("contributes one picker theme", () => {
     const themes = createThemes();
 
-    expect(themes).toHaveLength(2);
-    expect(themes.map((theme) => theme.contribution.label)).toEqual(["Umbre Dark", "Umbre Light"]);
+    expect(themes).toHaveLength(1);
+    expect(themes.map((theme) => theme.contribution.label)).toEqual(["Umbre"]);
     expect(themes.every((theme) => theme.contribution._watch)).toBe(true);
   });
 
   test("keeps variants generated on demand instead of contributed to the picker", () => {
     expect(expectedVariantCount).toBe(106250);
-    expect(createThemes().flatMap((theme) => theme.contribution)).toHaveLength(2);
+    expect(createThemes().flatMap((theme) => theme.contribution)).toHaveLength(1);
   });
 });
 

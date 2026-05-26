@@ -22,7 +22,7 @@ import {
 } from "@/config.ts";
 import { product } from "@/product.ts";
 import type { UmbreSettings } from "@/runtime/settings.ts";
-import { themeLabel } from "@/theme/naming.ts";
+import { detectSystemMode } from "@/runtime/system-mode.ts";
 import { titleCase } from "@/utils/text.ts";
 import { debounce } from "es-toolkit";
 import * as vscode from "vscode";
@@ -48,8 +48,9 @@ type PreviewSettings = (settings: UmbreSettings) => void;
 export const pickSettings = async (
   current: UmbreSettings,
   previewSettings?: PreviewSettings,
+  initialTarget?: ConfigurationTarget,
 ): Promise<UmbreSettings | undefined> => {
-  const target = await pickConfigurationTarget(current);
+  const target = initialTarget ?? (await pickConfigurationTarget(current));
   if (!target) return undefined;
 
   if (target === "all") return pickAllSettings(current, previewSettings);
@@ -75,7 +76,7 @@ const pickConfigurationTarget = async (current: UmbreSettings): Promise<Configur
       {
         label: "Mode",
         description: titleCase(current.mode),
-        detail: `Switch between ${themeLabel("dark")} and ${themeLabel("light")}.`,
+        detail: "Switch between dark and light mode when system sync is off.",
         value: "mode",
       },
       {
@@ -132,8 +133,9 @@ const pickSingleSetting = async (
 ): Promise<UmbreSettings | undefined> => {
   switch (target) {
     case "mode": {
-      const mode = await pickMode(current, previewSettings);
-      return mode ? { ...current, mode, shade: defaultShadeForMode(mode) } : undefined;
+      const manual = { ...current, systemAware: false };
+      const mode = await pickMode(manual, previewSettings);
+      return mode ? { ...manual, mode, shade: defaultShadeForMode(mode) } : undefined;
     }
     case "shade": {
       const shade = await pickShade(current, previewSettings);
@@ -161,7 +163,9 @@ const pickSingleSetting = async (
     }
     case "systemAware": {
       const systemAware = await pickSystemAware(current);
-      return systemAware === undefined ? undefined : { ...current, systemAware };
+      return systemAware === undefined
+        ? undefined
+        : settingsWithSystemAware(current, systemAware, previewSettings);
     }
   }
 };
@@ -170,13 +174,15 @@ const pickAllSettings = async (
   current: UmbreSettings,
   previewSettings?: PreviewSettings,
 ): Promise<UmbreSettings | undefined> => {
-  const mode = await pickMode(current, previewSettings);
-  if (!mode) return undefined;
-  const withMode = { ...current, mode, shade: defaultShadeForMode(mode) };
+  const systemAware = await pickSystemAware(current);
+  if (systemAware === undefined) return undefined;
 
-  const shade = await pickShade(withMode, previewSettings);
+  const withSync = await settingsWithSystemAware(current, systemAware, previewSettings);
+  if (!withSync) return undefined;
+
+  const shade = await pickShade(withSync, previewSettings);
   if (!shade) return undefined;
-  const withShade = { ...withMode, shade };
+  const withShade = { ...withSync, shade };
 
   const accent = await pickAccent(withShade, previewSettings);
   if (!accent) return undefined;
@@ -198,10 +204,7 @@ const pickAllSettings = async (
   if (!borders) return undefined;
   const withBorders = { ...withTerminal, borders };
 
-  const systemAware = await pickSystemAware(withBorders);
-  if (systemAware === undefined) return undefined;
-
-  return { ...withBorders, systemAware };
+  return withBorders;
 };
 
 type RecommendedPreset = {
@@ -304,7 +307,7 @@ const pickMode = async (
   return pickValue(
     modes.map((mode) => ({
       label: itemLabel(titleCase(mode), current.mode === mode),
-      description: themeLabel(mode),
+      description: `${titleCase(mode)} mode`,
       value: mode,
       current: current.mode === mode,
     })),
@@ -421,6 +424,28 @@ const pickBorders = async (
     (borders) => ({ ...current, borders }),
     previewSettings,
   );
+};
+
+const settingsWithSystemAware = async (
+  current: UmbreSettings,
+  systemAware: boolean,
+  previewSettings?: PreviewSettings,
+): Promise<UmbreSettings | undefined> => {
+  if (systemAware) {
+    const mode = (await detectSystemMode()) ?? current.mode;
+    const settings = {
+      ...current,
+      systemAware,
+      mode,
+      shade: current.mode === mode ? current.shade : defaultShadeForMode(mode),
+    };
+    previewSettings?.(settings);
+    return settings;
+  }
+
+  const manual = { ...current, systemAware };
+  const mode = await pickMode(manual, previewSettings);
+  return mode ? { ...manual, mode, shade: defaultShadeForMode(mode) } : undefined;
 };
 
 const pickSystemAware = async (current: UmbreSettings): Promise<boolean | undefined> => {

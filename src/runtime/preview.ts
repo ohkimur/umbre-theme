@@ -1,4 +1,4 @@
-import { modes, type Mode } from "@/config.ts";
+import type { Mode } from "@/config.ts";
 import { product } from "@/product.ts";
 import type { UmbreSettings } from "@/runtime/settings.ts";
 import { copyVariantToTheme, readThemeFile, writeThemeFile } from "@/runtime/theme-files.ts";
@@ -7,7 +7,7 @@ import * as vscode from "vscode";
 
 type PreviewSnapshot = {
   activeMode?: Mode;
-  themeFiles: Record<Mode, Uint8Array>;
+  themeFile: Uint8Array;
 };
 
 export type ThemePreview = {
@@ -33,7 +33,7 @@ export const createThemePreview = async (): Promise<ThemePreview> => {
     queue = queue
       .then(async () => {
         if (currentRequest !== request) return;
-        await copyVariantToTheme(settings, previewTargetMode(snapshot, settings));
+        await copyVariantToTheme(settings);
       })
       .catch(async (error: unknown) => {
         if (previewErrorShown) return;
@@ -48,9 +48,8 @@ export const createThemePreview = async (): Promise<ThemePreview> => {
     await queue.catch(() => undefined);
   };
 
-  const finish = async (settings: UmbreSettings): Promise<void> => {
+  const finish = async (_settings: UmbreSettings): Promise<void> => {
     await settle();
-    await restoreThemeFiles(snapshot, previewTargetMode(snapshot, settings));
   };
 
   const cancel = async (): Promise<void> => {
@@ -63,23 +62,17 @@ export const createThemePreview = async (): Promise<ThemePreview> => {
 
 const captureSnapshot = async (): Promise<PreviewSnapshot> => {
   const activeTheme = vscode.workspace.getConfiguration("workbench").get<string>("colorTheme", "");
-  const [dark, light] = await Promise.all([readThemeFile("dark"), readThemeFile("light")]);
-
+  const themeFile = await readThemeFile();
   const activeMode = themeModeFromLabel(activeTheme);
 
   return {
     ...(activeMode ? { activeMode } : {}),
-    themeFiles: { dark, light },
+    themeFile,
   };
 };
 
-const restoreThemeFiles = async (snapshot: PreviewSnapshot, keepMode?: Mode): Promise<void> => {
-  await Promise.all(
-    modes.map((mode) => {
-      if (mode === keepMode) return Promise.resolve();
-      return writeThemeFile(mode, snapshot.themeFiles[mode]);
-    }),
-  );
+const restoreThemeFiles = async (snapshot: PreviewSnapshot): Promise<void> => {
+  await writeThemeFile(snapshot.themeFile);
 };
 
 const previewTargetMode = (snapshot: PreviewSnapshot, settings: UmbreSettings): Mode => {

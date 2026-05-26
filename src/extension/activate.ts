@@ -1,3 +1,4 @@
+import { commandIds } from "@/product.ts";
 import { initializeAppearanceSync } from "@/runtime/appearance-sync.ts";
 import { initializeThemeApplication } from "@/runtime/apply.ts";
 import { registerCommands } from "@/runtime/commands.ts";
@@ -9,7 +10,9 @@ export const activate = (context: vscode.ExtensionContext): void => {
   initializeSettings(context);
   initializeThemeApplication(context);
   registerCommands(context);
-  initializeAppearanceSync(context);
+  initializeAppearanceSync(context, {
+    onThemeSelected: () => vscode.commands.executeCommand(commandIds.configure, { target: "all" }),
+  });
   suggestSymbolsIconTheme(context);
 };
 

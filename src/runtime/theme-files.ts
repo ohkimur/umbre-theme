@@ -1,4 +1,3 @@
-import type { Mode } from "@/config.ts";
 import { product } from "@/product.ts";
 import type { UmbreSettings } from "@/runtime/settings.ts";
 import { createThemeDocumentFromInput } from "@/theme/create-theme.ts";
@@ -12,19 +11,16 @@ export const initializeThemeFiles = (context: vscode.ExtensionContext): void => 
   extensionUri = context.extensionUri;
 };
 
-export const copyVariantToTheme = async (
-  settings: UmbreSettings,
-  targetMode: Mode = settings.mode,
-): Promise<void> => {
-  await writeThemeFile(targetMode, encodeTheme(settings));
+export const copyVariantToTheme = async (settings: UmbreSettings): Promise<void> => {
+  await writeThemeFile(encodeTheme(settings));
 };
 
-export const readThemeFile = async (mode: Mode): Promise<Uint8Array> => {
-  return vscode.workspace.fs.readFile(themeUri(mode));
+export const readThemeFile = async (): Promise<Uint8Array> => {
+  return vscode.workspace.fs.readFile(themeUri());
 };
 
-export const writeThemeFile = async (mode: Mode, content: Uint8Array): Promise<void> => {
-  const uri = themeUri(mode);
+export const writeThemeFile = async (content: Uint8Array): Promise<void> => {
+  const uri = themeUri();
   if (await fileContentEquals(uri, content)) return;
 
   await vscode.workspace.fs.writeFile(uri, content);
@@ -44,8 +40,8 @@ const encodeTheme = (settings: UmbreSettings): Uint8Array => {
   return Buffer.from(stringifyJson(document));
 };
 
-const themeUri = (mode: Mode): vscode.Uri => {
-  return vscode.Uri.joinPath(themesUri(), themeFileName(mode));
+const themeUri = (): vscode.Uri => {
+  return vscode.Uri.joinPath(themesUri(), themeFileName());
 };
 
 const themesUri = (): vscode.Uri => {
