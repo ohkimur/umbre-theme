@@ -22,6 +22,8 @@ Umbre is one calm theme you can shape from the Command Palette.
 
 No copied JSON. No color overrides. Pick a preset, tune what you want, and Umbre writes its own generated theme files for you.
 
+Umbre commands stay out of your way until the Umbre theme is active.
+
 ## Start here
 
 1. Install Umbre from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=ohkimur.umbre-theme) or [Open VSX](https://open-vsx.org/extension/ohkimur/umbre-theme).
