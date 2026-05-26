@@ -1,4 +1,6 @@
 import { access } from "node:fs/promises";
+import { homedir } from "node:os";
+import { join } from "node:path";
 
 import { product } from "@/product.ts";
 import { runCommand } from "@/utils/process.ts";
@@ -40,6 +42,7 @@ export const installExtension = async (args: string[] = []): Promise<void> => {
 
   for (const editor of targets) {
     await runCommand(editor.command, ["--install-extension", vsixPath.pathname, "--force"]);
+    await resetThemeSettings(editor);
     console.log(
       `Installed ${product.displayName} in ${editor.label}. Reload open ${editor.label} windows to activate this build.`,
     );
@@ -91,6 +94,65 @@ const requireAvailableEditor = (id: EditorId, editorStates: EditorState[]): Edit
   }
   return editor;
 };
+
+const resetThemeSettings = async (editor: EditorState): Promise<void> => {
+  const statePath = globalStatePath(editor.id);
+  if (!statePath) return;
+
+  try {
+    await access(statePath);
+  } catch {
+    return;
+  }
+
+  const key = "ohkimur.umbre-theme";
+  const value = await readSqliteValue(statePath, key);
+  if (!value) return;
+
+  const stored = JSON.parse(value) as Record<string, unknown>;
+  if (!(product.settingsStorageKey in stored)) return;
+
+  delete stored[product.settingsStorageKey];
+  await writeSqliteValue(statePath, key, JSON.stringify(stored));
+  console.log(`Reset ${product.displayName} theme settings in ${editor.label}.`);
+};
+
+const globalStatePath = (editor: EditorId): string | undefined => {
+  const home = homedir();
+
+  if (process.platform === "darwin") {
+    const appName = editor === "cursor" ? "Cursor" : "Code";
+    return join(home, "Library", "Application Support", appName, "User", "globalStorage", "state.vscdb");
+  }
+
+  if (process.platform === "win32") {
+    const appData = process.env.APPDATA;
+    if (!appData) return undefined;
+    const appName = editor === "cursor" ? "Cursor" : "Code";
+    return join(appData, appName, "User", "globalStorage", "state.vscdb");
+  }
+
+  const appName = editor === "cursor" ? "Cursor" : "Code";
+  return join(home, ".config", appName, "User", "globalStorage", "state.vscdb");
+};
+
+const readSqliteValue = async (databasePath: string, key: string): Promise<string | undefined> => {
+  const result = await readCommandOutput("sqlite3", [
+    databasePath,
+    `select value from ItemTable where key = ${sqlString(key)};`,
+  ]);
+  if (result.exitCode !== 0) return undefined;
+  return result.stdout || undefined;
+};
+
+const writeSqliteValue = async (databasePath: string, key: string, value: string): Promise<void> => {
+  await runCommand("sqlite3", [
+    databasePath,
+    `update ItemTable set value = json(${sqlString(value)}) where key = ${sqlString(key)};`,
+  ]);
+};
+
+const sqlString = (value: string): string => `'${value.replaceAll("'", "''")}'`;
 
 const suggestSymbols = async (editor: Editor): Promise<void> => {
   if (await hasExtension(editor.command, symbolsExtension.id)) return;
