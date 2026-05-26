@@ -36,16 +36,15 @@ export const initializeSystemAppearanceSync = (context: vscode.ExtensionContext)
 const syncSystemAppearance = async (options: { initialize?: boolean } = {}): Promise<void> => {
   if (suspended || applyingSystemMode) return;
   if (!activeUmbreMode()) return;
+  if (!options.initialize && (!hasStoredSettings() || !readSettings().systemAware)) return;
 
   const systemMode = await detectSystemMode();
-  if (!systemMode) return;
+  if (!systemMode || suspended) return;
 
   if (options.initialize) {
     latestSystemMode = systemMode;
     return;
   }
-
-  if (!hasStoredSettings()) return;
 
   const current = readSettings();
   if (!current.systemAware) return;

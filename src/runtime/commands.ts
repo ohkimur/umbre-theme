@@ -17,25 +17,25 @@ export const registerCommands = (context: vscode.ExtensionContext): void => {
 
 const configureTheme = async (): Promise<void> => {
   const activeMode = currentColorThemeMode();
-  const preview = await createThemePreview();
+  let preview: Awaited<ReturnType<typeof createThemePreview>> | undefined;
   let picked: UmbreSettings | undefined;
   let previewFinished = false;
 
   setSystemAppearanceSyncSuspended(true);
   try {
+    preview = await createThemePreview();
     picked = await pickSettings(readSettings(), preview.preview);
     if (!picked) return;
 
     await preview.finish(picked);
     previewFinished = true;
+    await updateSettings(picked);
+    const label = await applySettings(picked);
+    await showAppliedMessage(label, activeMode, picked.mode);
   } finally {
-    if (!previewFinished) await preview.cancel();
+    if (preview && !previewFinished) await preview.cancel();
     setSystemAppearanceSyncSuspended(false);
   }
-
-  await updateSettings(picked);
-  const label = await applySettings(picked);
-  await showAppliedMessage(label, activeMode, picked.mode);
 };
 
 const toggleOppositeTheme = async (): Promise<void> => {
