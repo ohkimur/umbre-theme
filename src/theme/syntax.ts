@@ -19,11 +19,12 @@ export const createSyntax = (
   const vividShade: Shade = mode === "dark" ? 500 : 800;
   const softShade: Shade = mode === "dark" ? 300 : 700;
   const syntaxMix = mode === "dark" ? dim.syntaxMix : dim.syntaxMix * 0.72;
+  const foregroundMix = mode === "dark" ? dim.syntaxMix * 0.64 : dim.syntaxMix * 0.46;
   const tone = (family: AccentFamily, shade: Shade = chromaShade): string =>
     mix(tw(family, shade), neutral, syntaxMix);
 
   const syntax = {
-    foreground: surfaces.fg,
+    foreground: mix(surfaces.fg, neutral, foregroundMix),
     comment: mix(surfaces.subtle, surfaces.muted, 0.62),
     keyword: tone("orange"),
     storage: tone("orange", vividShade),

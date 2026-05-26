@@ -174,6 +174,7 @@ describe("Umbre surface recipes", () => {
       });
 
       expect(faintColor.syntax.keyword).not.toBe(fullColor.syntax.keyword);
+      expect(faintColor.syntax.foreground).not.toBe(fullColor.syntax.foreground);
       expect(faintColor.surfaces).toEqual(fullColor.surfaces);
       expect(faintColor.accent).toEqual(fullColor.accent);
       expect(workbenchColors(faintColor)).toEqual(workbenchColors(fullColor));
