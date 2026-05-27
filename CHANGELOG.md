@@ -1,3 +1,10 @@
+## 0.3.1 (2026-05-27)
+
+### Bug Fixes
+
+- **release:** remove flaky marketplace token preflight ([c593820](https://github.com/ohkimur/umbre-theme/commit/c593820e37af08d7dc39ae41886db6c550f2a73f))
+- **release:** sync package version ([f90c9b2](https://github.com/ohkimur/umbre-theme/commit/f90c9b25f6b4ded60b0a8d3f33e06b30af5f085f))
+
 ## 0.3.0 (2026-05-26)
 
 ### Features
