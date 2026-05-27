@@ -69,4 +69,4 @@ Changes preview while you choose. Applying a theme keeps your editor settings cl
 
 Umbre pairs well with [Symbols](https://marketplace.visualstudio.com/items?itemName=miguelsolorio.symbols), a simple file icon theme for VS Code and Cursor.
 
-After you finish Umbre setup, Umbre can help install Symbols and open the icon theme picker.
+After you finish Umbre setup, Umbre can help install Symbols and apply it when you choose **Use Symbols**.

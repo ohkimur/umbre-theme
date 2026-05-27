@@ -56,7 +56,7 @@ const configureTheme = async (
     await updateSettings(picked);
     const label = await applySettings(picked);
     await showAppliedMessage(label, wasActiveTheme);
-    await suggestSymbolsIconTheme(context);
+    await suggestSymbolsIconTheme();
   } finally {
     if (preview && !previewFinished) await preview.cancel();
     setAppearanceSyncSuspended(false);

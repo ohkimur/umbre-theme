@@ -7,7 +7,6 @@ export const product = {
       id: "miguelsolorio.symbols",
       name: "Symbols",
       iconThemeId: "symbols",
-      promptStorageKey: "umbre.symbolsIconThemePromptDismissed",
       url: "https://marketplace.visualstudio.com/items?itemName=miguelsolorio.symbols",
     },
   },
