@@ -35,18 +35,15 @@ const encodeTheme = (settings: UmbreSettings): Uint8Array => {
     panels: settings.panels,
     terminal: settings.terminal,
     borders: settings.borders,
+    syntaxVariant: settings.syntaxVariant,
   });
 
   return Buffer.from(stringifyJson(document));
 };
 
 const themeUri = (): vscode.Uri => {
-  return vscode.Uri.joinPath(themesUri(), themeFileName());
-};
-
-const themesUri = (): vscode.Uri => {
   if (!extensionUri) throw new Error(`${product.displayName} theme files were used before activation.`);
-  return vscode.Uri.joinPath(extensionUri, "themes");
+  return vscode.Uri.joinPath(extensionUri, themeFileName());
 };
 
 const fileContentEquals = async (uri: vscode.Uri, content: Uint8Array): Promise<boolean> => {

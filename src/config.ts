@@ -56,6 +56,9 @@ export const accentFamilies = [
 ] as const;
 export type AccentFamily = (typeof accentFamilies)[number];
 
+export const DEFAULT_OPTION_BADGE = "[default option]";
+const defaultOptionDetail = (detail: string): string => `${detail}. ${DEFAULT_OPTION_BADGE}`;
+
 export const dimVariants = [
   {
     id: "1",
@@ -75,7 +78,7 @@ export const dimVariants = [
     id: "3",
     level: 3,
     label: "Soft syntax",
-    detail: "Reduces color contrast while preserving token distinction.",
+    detail: defaultOptionDetail("Reduces color contrast while preserving token distinction"),
     syntaxMix: 0.3,
   },
   {
@@ -114,7 +117,7 @@ export const panelVariants = [
     id: "3",
     level: 3,
     label: "Balanced panels",
-    detail: "Moderate panel separation without strong blocks; the default Umbre balance.",
+    detail: defaultOptionDetail("Moderate panel separation without strong blocks"),
     surfaceContrast: 0.82,
   },
   {
@@ -146,7 +149,7 @@ export const terminalVariants = [
     id: "2",
     level: 2,
     label: "Quiet terminal",
-    detail: "A small lift from the editor background; the default Umbre balance.",
+    detail: defaultOptionDetail("A small lift from the editor background"),
     backgroundMix: 0.25,
   },
   {
@@ -160,7 +163,7 @@ export const terminalVariants = [
     id: "4",
     level: 4,
     label: "Clear terminal",
-    detail: "Strong terminal separation; the default Umbre balance.",
+    detail: "Strong terminal separation.",
     backgroundMix: 0.75,
   },
   {
@@ -185,7 +188,7 @@ export const borderVariants = [
     id: "2",
     level: 2,
     label: "Hairline borders",
-    detail: "Barely visible separators for a softer layout.",
+    detail: defaultOptionDetail("Barely visible separators for a softer layout"),
     opacity: 0.24,
   },
   {
@@ -212,6 +215,25 @@ export const borderVariants = [
 ] as const;
 export type BorderVariant = (typeof borderVariants)[number];
 
+export const syntaxVariants = [
+  {
+    id: "ember",
+    label: "Ember",
+    detail: defaultOptionDetail("Warm-toned"),
+  },
+  {
+    id: "flare",
+    label: "Flare",
+    detail: "Bold token contrast.",
+  },
+  {
+    id: "frost",
+    label: "Frost",
+    detail: "Cool-toned throughout.",
+  },
+] as const;
+export type SyntaxVariant = (typeof syntaxVariants)[number];
+
 export const defaultMode = "dark" satisfies Mode;
 export const defaultDarkShade = shadeVariants[2];
 export const defaultLightShade = shadeVariants[2];
@@ -221,6 +243,7 @@ export const defaultDimming = dimVariants[2];
 export const defaultPanels = panelVariants[2];
 export const defaultTerminal = terminalVariants[1];
 export const defaultBorders = borderVariants[1];
+export const defaultSyntax = syntaxVariants[0];
 export const defaultShadeForMode = (mode: Mode): ShadeVariant => {
   return mode === "dark" ? defaultDarkShade : defaultLightShade;
 };

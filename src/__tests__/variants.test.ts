@@ -9,11 +9,13 @@ import {
   defaultDimming,
   defaultLightShade,
   defaultPanels,
+  defaultSyntax,
   defaultTerminal,
   dimVariants,
   modes,
   panelVariants,
   shadeVariants,
+  syntaxVariants,
   terminalVariants,
 } from "@/config.ts";
 import { oppositeSettings } from "@/runtime/opposite-settings.ts";
@@ -32,7 +34,8 @@ const expectedVariantCount =
   dimVariants.length *
   panelVariants.length *
   terminalVariants.length *
-  borderVariants.length;
+  borderVariants.length *
+  syntaxVariants.length;
 const validatedCoreVariantCount =
   modes.length * shadeVariants.length * accentFamilies.length * dimVariants.length * borderVariants.length;
 
@@ -42,11 +45,13 @@ describe("Umbre generated theme inventory", () => {
 
     expect(themes).toHaveLength(1);
     expect(themes.map((theme) => theme.contribution.label)).toEqual(["Umbre"]);
+    expect(themes.map((theme) => theme.fileName)).toEqual(["umbre-theme.json"]);
+    expect(themes.map((theme) => theme.contribution.path)).toEqual(["./umbre-theme.json"]);
     expect(themes.every((theme) => theme.contribution._watch)).toBe(true);
   });
 
   test("keeps variants generated on demand instead of contributed to the picker", () => {
-    expect(expectedVariantCount).toBe(106250);
+    expect(expectedVariantCount).toBe(318750);
     expect(createThemes().flatMap((theme) => theme.contribution)).toHaveLength(1);
   });
 });
@@ -73,6 +78,7 @@ describe("Umbre opposite settings", () => {
       terminal: terminalVariants[3],
       borders: borderVariants[2],
       systemAware: true,
+      syntaxVariant: defaultSyntax,
     });
 
     expect(opposite.mode).toBe("light");
@@ -83,6 +89,7 @@ describe("Umbre opposite settings", () => {
     expect(opposite.terminal.level).toBe(2);
     expect(opposite.borders.level).toBe(3);
     expect(opposite.systemAware).toBe(true);
+    expect(opposite.syntaxVariant).toBe(defaultSyntax);
   });
 });
 
@@ -100,6 +107,7 @@ describe("Umbre surface recipes", () => {
           panels: defaultPanels,
           terminal: defaultTerminal,
           borders: borderVariants[2],
+          syntaxVariant: defaultSyntax,
         });
         const contrastFromPaper = contrastRatio(model.surfaces.editor, white());
 
@@ -122,6 +130,7 @@ describe("Umbre surface recipes", () => {
         panels: defaultPanels,
         terminal: defaultTerminal,
         borders: borderVariants[2],
+        syntaxVariant: defaultSyntax,
       });
       return contrastRatio(model.surfaces.editor, white());
     });
@@ -145,6 +154,7 @@ describe("Umbre surface recipes", () => {
       panels: defaultPanels,
       terminal: defaultTerminal,
       borders: borderVariants[2],
+      syntaxVariant: defaultSyntax,
     });
 
     expect(contrastRatio(pureBlack.surfaces.raised, pureBlack.surfaces.overlay)).toBeGreaterThanOrEqual(1.08);
@@ -162,6 +172,7 @@ describe("Umbre surface recipes", () => {
         panels: defaultPanels,
         terminal: defaultTerminal,
         borders: borderVariants[2],
+        syntaxVariant: defaultSyntax,
       });
       const faintColor = createThemeModel({
         mode,
@@ -171,6 +182,7 @@ describe("Umbre surface recipes", () => {
         panels: defaultPanels,
         terminal: defaultTerminal,
         borders: borderVariants[2],
+        syntaxVariant: defaultSyntax,
       });
 
       expect(faintColor.syntax.keyword).not.toBe(fullColor.syntax.keyword);
@@ -190,6 +202,7 @@ describe("Umbre surface recipes", () => {
       panels: panelVariants[0],
       terminal: defaultTerminal,
       borders: borderVariants[2],
+      syntaxVariant: defaultSyntax,
     });
     const highContrast = createThemeModel({
       mode: "dark",
@@ -199,6 +212,7 @@ describe("Umbre surface recipes", () => {
       panels: panelVariants[4],
       terminal: defaultTerminal,
       borders: borderVariants[2],
+      syntaxVariant: defaultSyntax,
     });
 
     expect(highContrast.surfaces.editor).toBe(lowContrast.surfaces.editor);
@@ -215,6 +229,7 @@ describe("Umbre surface recipes", () => {
         panels: defaultPanels,
         terminal: terminalVariants[0],
         borders: borderVariants[2],
+        syntaxVariant: defaultSyntax,
       });
       const strongTerminal = createThemeModel({
         mode,
@@ -224,6 +239,7 @@ describe("Umbre surface recipes", () => {
         panels: defaultPanels,
         terminal: terminalVariants[4],
         borders: borderVariants[2],
+        syntaxVariant: defaultSyntax,
       });
 
       expect(quietTerminal.surfaces).toEqual(strongTerminal.surfaces);
@@ -246,6 +262,7 @@ describe("Umbre surface recipes", () => {
           panels: defaultPanels,
           terminal,
           borders: borderVariants[2],
+          syntaxVariant: defaultSyntax,
         });
         const colors = workbenchColors(model);
         const terminalBackground = colors["terminal.background"];
@@ -279,6 +296,7 @@ describe("Umbre variant colors", () => {
                 panels: defaultPanels,
                 terminal: defaultTerminal,
                 borders,
+                syntaxVariant: defaultSyntax,
               });
               const colors = workbenchColors(model);
               const tokens = tokenColors(model);
@@ -301,6 +319,89 @@ describe("Umbre variant colors", () => {
     }
 
     expect(variantCount).toBe(validatedCoreVariantCount);
+  });
+});
+
+describe("Umbre syntax variants", () => {
+  test("generates different syntax colors for flare and frost variants", () => {
+    const umbreModel = createThemeModel({
+      mode: "dark",
+      shade: shadeVariants[2],
+      accentFamily: "amber",
+      dim: dimVariants[0],
+      panels: defaultPanels,
+      terminal: defaultTerminal,
+      borders: borderVariants[2],
+      syntaxVariant: defaultSyntax,
+    });
+
+    const flareVariant = syntaxVariants.find((variant) => variant.id === "flare")!;
+    const flareModel = createThemeModel({
+      mode: "dark",
+      shade: shadeVariants[2],
+      accentFamily: "amber",
+      dim: dimVariants[0],
+      panels: defaultPanels,
+      terminal: defaultTerminal,
+      borders: borderVariants[2],
+      syntaxVariant: flareVariant,
+    });
+
+    const frostVariant = syntaxVariants.find((variant) => variant.id === "frost")!;
+    const frostModel = createThemeModel({
+      mode: "dark",
+      shade: shadeVariants[2],
+      accentFamily: "amber",
+      dim: dimVariants[0],
+      panels: defaultPanels,
+      terminal: defaultTerminal,
+      borders: borderVariants[2],
+      syntaxVariant: frostVariant,
+    });
+
+    expect(flareModel.syntax.keyword).not.toBe(umbreModel.syntax.keyword);
+    expect(frostModel.syntax.keyword).not.toBe(umbreModel.syntax.keyword);
+    expect(frostModel.syntax.keyword).not.toBe(flareModel.syntax.keyword);
+  });
+
+  test("uses syntax.parameter for function argument token and semantic colors", () => {
+    const frostVariant = syntaxVariants.find((variant) => variant.id === "frost")!;
+    const model = createThemeModel({
+      mode: "dark",
+      shade: shadeVariants[2],
+      accentFamily: "amber",
+      dim: dimVariants[0],
+      panels: defaultPanels,
+      terminal: defaultTerminal,
+      borders: borderVariants[2],
+      syntaxVariant: frostVariant,
+    });
+    const tokens = tokenColors(model);
+    const semanticTokens = semanticTokenColors(model);
+    const functionArguments = tokens.find((token) => token.name === "Function Arguments");
+    const functionCallArguments = tokens.find((token) => token.name === "Function Call Arguments");
+
+    expect(model.syntax.parameter).not.toBe(model.syntax.foreground);
+    expect(functionArguments?.settings.foreground).toBe(model.syntax.parameter);
+    expect(functionCallArguments?.settings.foreground).toBe(model.syntax.parameter);
+    expect(semanticTokens.parameter).toBe(model.syntax.parameter);
+  });
+
+  test("parameter colors differ across syntax variants", () => {
+    const models = syntaxVariants.map((syntaxVariant) =>
+      createThemeModel({
+        mode: "dark",
+        shade: shadeVariants[2],
+        accentFamily: "amber",
+        dim: dimVariants[0],
+        panels: defaultPanels,
+        terminal: defaultTerminal,
+        borders: borderVariants[2],
+        syntaxVariant,
+      }),
+    );
+
+    expect(new Set(models.map((model) => model.syntax.parameter)).size).toBe(syntaxVariants.length);
   });
 });
 

@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 
 import { commandContributions, type CommandContribution } from "@/extension/contributions.ts";
 import { commandIds, product } from "@/product.ts";
-import type { ThemeContribution } from "@/theme/types.ts";
+import type { BuiltTheme, ThemeContribution } from "@/theme/types.ts";
 import { copyDir, copyFile, ensureDir } from "@/utils/fs.ts";
 import { writeJson } from "@/utils/json.ts";
 import {
@@ -15,7 +15,6 @@ import {
   readmePath,
   screenshotsPath,
   rootDir,
-  themesDir,
 } from "@scripts/build/paths.ts";
 import { createThemes } from "@scripts/build/themes.ts";
 
@@ -74,19 +73,21 @@ const readPackageMetadata = async (): Promise<ExtensionPackageMetadata> => {
 
 const createExtensionManifest = (
   packageMetadata: ExtensionPackageMetadata,
-  themes: ThemeContribution[],
+  themes: BuiltTheme[],
 ): ExtensionManifest => ({
   ...packageMetadata,
   type: "module",
   main: "./extension.js",
   icon: "assets/logo.png",
-  activationEvents: [
-    `onCommand:${commandIds.configure}`,
-    `onCommand:${commandIds.toggleOpposite}`,
-    `onCommand:${commandIds.chooseFont}`,
-    "onStartupFinished",
+  activationEvents: ["onStartupFinished"],
+  files: [
+    "extension.js",
+    "assets/**",
+    ...themes.map((theme) => theme.fileName),
+    "README.md",
+    "LICENSE",
+    "package.json",
   ],
-  files: ["extension.js", "assets/**", "themes/**", "README.md", "LICENSE", "package.json"],
   engines: {
     vscode: "^1.100.0",
   },
@@ -107,7 +108,7 @@ const createExtensionManifest = (
         },
       ],
     },
-    themes,
+    themes: themes.map((theme) => theme.contribution),
   },
 });
 
@@ -141,22 +142,15 @@ const writeExtensionArtifacts = async (): Promise<void> => {
   const themes = createThemes();
   const packageMetadata = await readPackageMetadata();
 
-  await ensureDir(themesDir);
   await ensureDir(distAssetsDir);
   await Promise.all([
-    ...themes.map((theme) => writeJson(new URL(theme.fileName, themesDir), theme.document)),
+    ...themes.map((theme) => writeJson(new URL(theme.fileName, distDir), theme.document)),
     copyFile(logoPath, new URL("logo.png", distAssetsDir)),
     copyFile(screenshotsPath, new URL("screenshots.png", distAssetsDir)),
     copyDir(fontsPath, distFontsPath),
     copyFile(readmePath, new URL("README.md", distDir)),
     copyFile(licensePath, new URL("LICENSE", distDir)),
-    writeJson(
-      new URL("package.json", distDir),
-      createExtensionManifest(
-        packageMetadata,
-        themes.map((theme) => theme.contribution),
-      ),
-    ),
+    writeJson(new URL("package.json", distDir), createExtensionManifest(packageMetadata, themes)),
   ]);
 
   console.log(`Built ${themes.length} ${product.displayName} themes in ${distDir.pathname}`);

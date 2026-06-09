@@ -1,16 +1,20 @@
 import {
+  DEFAULT_OPTION_BADGE,
   accentFamilies,
   borderVariants,
   defaultAccent,
   defaultBorders,
   defaultDimming,
+  defaultMode,
   defaultPanels,
   defaultShadeForMode,
+  defaultSyntax,
   defaultTerminal,
   dimVariants,
   modes,
   panelVariants,
   shadeVariants,
+  syntaxVariants,
   terminalVariants,
   type AccentFamily,
   type BorderVariant,
@@ -18,6 +22,7 @@ import {
   type Mode,
   type PanelVariant,
   type ShadeVariant,
+  type SyntaxVariant,
   type TerminalVariant,
 } from "@/config.ts";
 import { product } from "@/product.ts";
@@ -44,7 +49,8 @@ type ConfigurationTarget =
   | "terminal"
   | "borders"
   | "systemAware"
-  | "font";
+  | "font"
+  | "syntaxVariant";
 type PreviewSettings = (settings: UmbreSettings) => void;
 
 export const pickSettings = async (
@@ -92,6 +98,12 @@ const pickConfigurationTarget = async (current: UmbreSettings): Promise<Configur
         description: titleCase(current.accent),
         detail: "Change command, cursor, focus, badge, and active states.",
         value: "accent",
+      },
+      {
+        label: "Syntax color scheme",
+        description: current.syntaxVariant.label,
+        detail: current.syntaxVariant.detail,
+        value: "syntaxVariant",
       },
       {
         label: "Editor dimming",
@@ -153,6 +165,10 @@ const pickSingleSetting = async (
       const accent = await pickAccent(current, previewSettings);
       return accent ? { ...current, accent } : undefined;
     }
+    case "syntaxVariant": {
+      const syntaxVariant = await pickSyntaxVariant(current, previewSettings);
+      return syntaxVariant ? { ...current, syntaxVariant } : undefined;
+    }
     case "dimming": {
       const dim = await pickDimming(current, previewSettings);
       return dim ? { ...current, dim } : undefined;
@@ -200,9 +216,13 @@ const pickAllSettings = async (
   if (!accent) return undefined;
   const withAccent = { ...withShade, accent };
 
-  const dim = await pickDimming(withAccent, previewSettings);
+  const syntaxVariant = await pickSyntaxVariant(withAccent, previewSettings);
+  if (!syntaxVariant) return undefined;
+  const withSyntaxVariant = { ...withAccent, syntaxVariant };
+
+  const dim = await pickDimming(withSyntaxVariant, previewSettings);
   if (!dim) return undefined;
-  const withDimming = { ...withAccent, dim };
+  const withDimming = { ...withSyntaxVariant, dim };
 
   const panels = await pickPanels(withDimming, previewSettings);
   if (!panels) return undefined;
@@ -234,7 +254,7 @@ const recommendedPresets = [
     id: "light",
     label: "Light",
     description: "Beautiful light setup",
-    detail: "Light surface with balanced syntax, panels, terminal, and soft hairline borders.",
+    detail: "Light surface with default syntax colors, panels, terminal, and soft hairline borders.",
     settings: {
       mode: "light",
       shade: shadeVariants[0],
@@ -243,13 +263,14 @@ const recommendedPresets = [
       panels: defaultPanels,
       terminal: defaultTerminal,
       borders: defaultBorders,
+      syntaxVariant: defaultSyntax,
     },
   },
   {
     id: "balanced",
     label: "Balanced",
-    description: "Default Umbre balance",
-    detail: "Middle shade with balanced syntax, panels, terminal, and soft hairline borders.",
+    description: "Balanced setup",
+    detail: `Middle shade with default syntax colors, panels, terminal, and soft hairline borders. ${DEFAULT_OPTION_BADGE}`,
     settings: {
       mode: "dark",
       shade: defaultShadeForMode("dark"),
@@ -258,13 +279,14 @@ const recommendedPresets = [
       panels: defaultPanels,
       terminal: defaultTerminal,
       borders: defaultBorders,
+      syntaxVariant: defaultSyntax,
     },
   },
   {
     id: "pure-black",
     label: "Pure black",
     description: "Very dark minimal setup",
-    detail: "True black surface with balanced syntax, panels, terminal, and soft hairline borders.",
+    detail: "True black surface with default syntax colors, panels, terminal, and soft hairline borders.",
     settings: {
       mode: "dark",
       shade: shadeVariants[4],
@@ -273,6 +295,7 @@ const recommendedPresets = [
       panels: defaultPanels,
       terminal: defaultTerminal,
       borders: defaultBorders,
+      syntaxVariant: defaultSyntax,
     },
   },
 ] satisfies RecommendedPreset[];
@@ -309,6 +332,7 @@ const pickMode = async (
     modes.map((mode) => ({
       label: itemLabel(titleCase(mode), current.mode === mode),
       description: `${titleCase(mode)} mode`,
+      ...(mode === defaultMode ? { detail: DEFAULT_OPTION_BADGE } : {}),
       value: mode,
       current: current.mode === mode,
     })),
@@ -328,7 +352,7 @@ const pickShade = async (
     shadeVariants.map((shade) => ({
       label: itemLabel(`Level ${shade.level}`, current.shade.id === shade.id),
       description: shadeLabel(current.mode, shade),
-      detail: levelSlider(shade.level),
+      detail: shadeDetail(current.mode, shade),
       value: shade,
       current: current.shade.id === shade.id,
     })),
@@ -346,11 +370,29 @@ const pickAccent = async (
     accentFamilies.map((accent) => ({
       label: itemLabel(titleCase(accent), current.accent === accent),
       description: "Accent color",
+      ...(accent === defaultAccent ? { detail: DEFAULT_OPTION_BADGE } : {}),
       value: accent,
       current: current.accent === accent,
     })),
     `${product.displayName}: select accent`,
     (accent) => ({ ...current, accent }),
+    previewSettings,
+  );
+};
+
+const pickSyntaxVariant = async (
+  current: UmbreSettings,
+  previewSettings?: PreviewSettings,
+): Promise<SyntaxVariant | undefined> => {
+  return pickValue(
+    syntaxVariants.map((variant) => ({
+      label: itemLabel(variant.label, current.syntaxVariant.id === variant.id),
+      description: variant.detail,
+      value: variant,
+      current: current.syntaxVariant.id === variant.id,
+    })),
+    `${product.displayName}: select syntax color scheme`,
+    (syntaxVariant) => ({ ...current, syntaxVariant }),
     previewSettings,
   );
 };
@@ -531,6 +573,11 @@ const settingDetail = (setting: { level: number; detail: string }): string => {
 
 const shadeLabel = (mode: Mode, shade: ShadeVariant): string => {
   return mode === "dark" ? shade.darkLabel : shade.lightLabel;
+};
+
+const shadeDetail = (mode: Mode, shade: ShadeVariant): string => {
+  const slider = levelSlider(shade.level);
+  return shade.id === defaultShadeForMode(mode).id ? `${slider}  ${DEFAULT_OPTION_BADGE}` : slider;
 };
 
 const levelSlider = (level: number): string => {

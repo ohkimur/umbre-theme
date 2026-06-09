@@ -5,6 +5,7 @@ import type {
   Mode,
   PanelVariant,
   ShadeVariant,
+  SyntaxVariant,
   TerminalVariant,
 } from "@/config.ts";
 
@@ -79,6 +80,7 @@ export type ThemeModel = {
   panels: PanelVariant;
   terminal: TerminalVariant;
   borders: BorderVariant;
+  syntaxVariant: SyntaxVariant;
   accent: Accent;
   surfaces: Surfaces;
   syntax: Syntax;
