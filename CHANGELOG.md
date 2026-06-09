@@ -1,3 +1,10 @@
+## 0.4.1 (2026-06-09)
+
+### Bug Fixes
+
+- **theme:** hide commands unless Umbre is active ([3d46131](https://github.com/ohkimur/umbre-theme/commit/3d46131827bb7789614100cc771894bccab4b6bd))
+- **theme:** prefer default picker fallbacks ([17c8184](https://github.com/ohkimur/umbre-theme/commit/17c818492f3739feb7542ef574a08bcbf0f3389b))
+
 ## 0.4.0 (2026-06-09)
 
 ### Features
