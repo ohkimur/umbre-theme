@@ -2,6 +2,7 @@ import type { Mode } from "@/config.ts";
 import {
   affectsUmbreThemeConfiguration,
   configuredUmbreThemeMode,
+  isUmbreThemeActive,
   isUmbreThemeConfigured,
 } from "@/runtime/active-theme.ts";
 import { applySettings, isApplyingSettings } from "@/runtime/apply.ts";
@@ -116,7 +117,7 @@ const rememberSystemMode = async (): Promise<void> => {
 };
 
 const updateActiveThemeContext = (): Thenable<void> => {
-  return vscode.commands.executeCommand("setContext", activeThemeContextKey, isUmbreThemeConfigured());
+  return vscode.commands.executeCommand("setContext", activeThemeContextKey, isUmbreThemeActive());
 };
 
 const activeThemeMode = (): Mode | undefined => configuredUmbreThemeMode();
