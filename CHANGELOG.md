@@ -1,3 +1,17 @@
+## 0.4.0 (2026-06-09)
+
+### Features
+
+- implement theme engine and add configurable syntax color schemes ([0390d16](https://github.com/ohkimur/umbre-theme/commit/0390d1619ab52b72136176025c31ff4dedf147a6))
+
+### Bug Fixes
+
+- **manifest:** derive theme package files ([1710c56](https://github.com/ohkimur/umbre-theme/commit/1710c5681eaa364099713df86663a796e3ceb234))
+- **manifest:** remove redundant command activation events ([9aa42de](https://github.com/ohkimur/umbre-theme/commit/9aa42de06e63551406e24a025df666f57922928e))
+- **picker:** clarify recommended preset syntax copy ([9995073](https://github.com/ohkimur/umbre-theme/commit/99950739e8de873015510f141ea1cbba5839e154))
+- **picker:** mark balanced preset as default option ([741acf2](https://github.com/ohkimur/umbre-theme/commit/741acf2d18c281f2ee711a2f14ec4a8d50ebadfa))
+- **theme:** update parameter tone for syntax to use softShade ([786d5fb](https://github.com/ohkimur/umbre-theme/commit/786d5fbfe288aa1303eaa082f381375bb23440f0))
+
 ## 0.3.3 (2026-05-27)
 
 ### Bug Fixes
