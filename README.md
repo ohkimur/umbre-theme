@@ -22,7 +22,7 @@ Umbre is one calm theme you can shape from the Command Palette.
 
 No copied JSON. No color overrides. Pick a preset, tune what you want, and Umbre writes its own generated theme files for you.
 
-Umbre commands are always available from the Command Palette and guide you if the theme is not active yet.
+Umbre commands appear in the Command Palette after you choose the Umbre theme.
 
 ## Start here
 

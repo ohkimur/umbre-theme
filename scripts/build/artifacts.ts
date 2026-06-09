@@ -71,7 +71,9 @@ const readPackageMetadata = async (): Promise<ExtensionPackageMetadata> => {
   };
 };
 
-const createExtensionManifest = (
+export const activeThemeWhenClause = "umbre.active";
+
+export const createExtensionManifest = (
   packageMetadata: ExtensionPackageMetadata,
   themes: BuiltTheme[],
 ): ExtensionManifest => ({
@@ -99,12 +101,15 @@ const createExtensionManifest = (
       commandPalette: [
         {
           command: commandIds.configure,
+          when: activeThemeWhenClause,
         },
         {
           command: commandIds.toggleOpposite,
+          when: activeThemeWhenClause,
         },
         {
           command: commandIds.chooseFont,
+          when: activeThemeWhenClause,
         },
       ],
     },
@@ -156,4 +161,4 @@ const writeExtensionArtifacts = async (): Promise<void> => {
   console.log(`Built ${themes.length} ${product.displayName} themes in ${distDir.pathname}`);
 };
 
-await writeExtensionArtifacts();
+if (import.meta.main) await writeExtensionArtifacts();

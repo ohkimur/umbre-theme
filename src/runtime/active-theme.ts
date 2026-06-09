@@ -6,28 +6,55 @@ const themeConfigurationKeys = [
   "workbench.colorTheme",
   "workbench.preferredDarkColorTheme",
   "workbench.preferredLightColorTheme",
+  "window.autoDetectColorScheme",
 ] as const;
 
+type WorkbenchThemeLabels = {
+  colorTheme: string;
+  preferredDark: string;
+  preferredLight: string;
+};
+
 export const isUmbreThemeConfigured = (): boolean =>
-  workbenchThemeLabels().some((label) => isThemeLabel(label));
+  Object.values(workbenchThemeLabels()).some((label) => isThemeLabel(label));
+
+export const isUmbreThemeActive = (): boolean => {
+  const labels = workbenchThemeLabels();
+  if (isThemeLabel(labels.colorTheme)) return true;
+  if (!autoDetectColorScheme()) return false;
+
+  const preferredTheme = preferredThemeForActiveKind(labels);
+  return preferredTheme !== undefined && isThemeLabel(preferredTheme);
+};
 
 export const configuredUmbreThemeMode = (): Mode | undefined => {
-  const [colorTheme, preferredDark, preferredLight] = workbenchThemeLabels();
+  const labels = workbenchThemeLabels();
   return (
-    themeModeFromLabel(colorTheme) ??
-    (isThemeLabel(preferredDark) ? "dark" : undefined) ??
-    (isThemeLabel(preferredLight) ? "light" : undefined)
+    themeModeFromLabel(labels.colorTheme) ??
+    (isThemeLabel(labels.preferredDark) ? "dark" : undefined) ??
+    (isThemeLabel(labels.preferredLight) ? "light" : undefined)
   );
 };
 
 export const affectsUmbreThemeConfiguration = (event: vscode.ConfigurationChangeEvent): boolean =>
   themeConfigurationKeys.some((key) => event.affectsConfiguration(key));
 
-const workbenchThemeLabels = (): [string, string, string] => {
+const workbenchThemeLabels = (): WorkbenchThemeLabels => {
   const workbench = vscode.workspace.getConfiguration("workbench");
-  return [
-    workbench.get<string>("colorTheme", ""),
-    workbench.get<string>("preferredDarkColorTheme", ""),
-    workbench.get<string>("preferredLightColorTheme", ""),
-  ];
+  return {
+    colorTheme: workbench.get<string>("colorTheme", ""),
+    preferredDark: workbench.get<string>("preferredDarkColorTheme", ""),
+    preferredLight: workbench.get<string>("preferredLightColorTheme", ""),
+  };
+};
+
+const preferredThemeForActiveKind = (labels: WorkbenchThemeLabels): string | undefined => {
+  const activeKind = vscode.window.activeColorTheme.kind;
+  if (activeKind === vscode.ColorThemeKind.Dark) return labels.preferredDark;
+  if (activeKind === vscode.ColorThemeKind.Light) return labels.preferredLight;
+  return undefined;
+};
+
+const autoDetectColorScheme = (): boolean => {
+  return vscode.workspace.getConfiguration("window").get<boolean>("autoDetectColorScheme", false);
 };
