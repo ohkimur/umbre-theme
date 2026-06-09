@@ -36,6 +36,7 @@ import * as vscode from "vscode";
 type PickItem<Value> = vscode.QuickPickItem & {
   value: Value;
   current?: boolean;
+  default?: boolean;
 };
 
 type ConfigurationTarget =
@@ -317,6 +318,7 @@ const pickRecommendedSettings = async (
       detail: preset.detail,
       value: preset.settings,
       current: preset.id === selectedPreset?.id,
+      default: preset.id === "balanced",
     })),
     `${product.displayName}: select recommended preset`,
     (settings) => settings,
@@ -335,6 +337,7 @@ const pickMode = async (
       ...(mode === defaultMode ? { detail: DEFAULT_OPTION_BADGE } : {}),
       value: mode,
       current: current.mode === mode,
+      default: mode === defaultMode,
     })),
     `${product.displayName}: select mode`,
     (mode) => ({ ...current, mode, shade: defaultShadeForMode(mode) }),
@@ -355,6 +358,7 @@ const pickShade = async (
       detail: shadeDetail(current.mode, shade),
       value: shade,
       current: current.shade.id === shade.id,
+      default: shade.id === defaultShadeForMode(current.mode).id,
     })),
     `${product.displayName}: select ${noun} level`,
     (shade) => ({ ...current, shade }),
@@ -373,6 +377,7 @@ const pickAccent = async (
       ...(accent === defaultAccent ? { detail: DEFAULT_OPTION_BADGE } : {}),
       value: accent,
       current: current.accent === accent,
+      default: accent === defaultAccent,
     })),
     `${product.displayName}: select accent`,
     (accent) => ({ ...current, accent }),
@@ -390,6 +395,7 @@ const pickSyntaxVariant = async (
       description: variant.detail,
       value: variant,
       current: current.syntaxVariant.id === variant.id,
+      default: variant.id === defaultSyntax.id,
     })),
     `${product.displayName}: select syntax color scheme`,
     (syntaxVariant) => ({ ...current, syntaxVariant }),
@@ -408,6 +414,7 @@ const pickDimming = async (
       detail: settingDetail(dim),
       value: dim,
       current: current.dim.id === dim.id,
+      default: dim.id === defaultDimming.id,
     })),
     `${product.displayName}: select editor dimming`,
     (dim) => ({ ...current, dim }),
@@ -426,6 +433,7 @@ const pickPanels = async (
       detail: settingDetail(panels),
       value: panels,
       current: current.panels.id === panels.id,
+      default: panels.id === defaultPanels.id,
     })),
     `${product.displayName}: select panel contrast`,
     (panels) => ({ ...current, panels }),
@@ -444,6 +452,7 @@ const pickTerminal = async (
       detail: settingDetail(terminal),
       value: terminal,
       current: current.terminal.id === terminal.id,
+      default: terminal.id === defaultTerminal.id,
     })),
     `${product.displayName}: select terminal contrast`,
     (terminal) => ({ ...current, terminal }),
@@ -462,6 +471,7 @@ const pickBorders = async (
       detail: settingDetail(borders),
       value: borders,
       current: current.borders.id === borders.id,
+      default: borders.id === defaultBorders.id,
     })),
     `${product.displayName}: select border intensity`,
     (borders) => ({ ...current, borders }),
@@ -508,6 +518,7 @@ const pickSystemAware = async (current: UmbreSettings): Promise<boolean | undefi
         detail: "Keep Umbre on the mode you choose until you change it yourself.",
         value: false,
         current: !current.systemAware,
+        default: true,
       },
     ],
     `${product.displayName}: system appearance sync`,
@@ -521,7 +532,7 @@ const pickValue = async <Value>(
   previewSettings?: PreviewSettings,
 ): Promise<Value | undefined> => {
   const picker = vscode.window.createQuickPick<PickItem<Value>>();
-  const activeItem = items.find((item) => item.current) ?? items[0];
+  const activeItem = items.find((item) => item.current) ?? items.find((item) => item.default) ?? items[0];
   picker.title = title;
   picker.ignoreFocusOut = true;
   picker.items = items;
