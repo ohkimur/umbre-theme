@@ -45,7 +45,7 @@ mock.module("vscode", () => ({
   },
 }));
 
-const { pickSettings } = await import("@/runtime/picker.ts");
+const { pickSettings, preferredActiveItem } = await import("@/runtime/picker.ts");
 const { panelVariants } = await import("@/config.ts");
 const { defaultSettings } = await import("@/runtime/settings.ts");
 
@@ -70,28 +70,6 @@ describe("Umbre settings picker defaults", () => {
     ]);
   });
 
-  test("falls back to the default panel contrast when the current item has no match", async () => {
-    const current = {
-      ...defaultSettings(),
-      panels: {
-        id: "custom",
-        level: 99,
-        label: "Custom panels",
-        detail: "Not part of the built-in picker.",
-        surfaceContrast: 2,
-      },
-    } as unknown as UmbreSettings;
-
-    await pickSettings(current, undefined, "panels");
-
-    expect(capturedPickers).toEqual([
-      {
-        title: "Umbre: select panel contrast",
-        activeLabel: "Level 3",
-      },
-    ]);
-  });
-
   test("falls back to the balanced recommended preset when no preset matches", async () => {
     const current = {
       ...defaultSettings(),
@@ -106,5 +84,26 @@ describe("Umbre settings picker defaults", () => {
         activeLabel: "Balanced",
       },
     ]);
+  });
+
+  test("prefers current items before default fallbacks", () => {
+    const current = { label: "Current", value: "current", current: true };
+    const fallback = { label: "Default", value: "default", isDefault: true };
+
+    expect(preferredActiveItem([fallback, current])?.value).toBe("current");
+  });
+
+  test("falls back to the default item when no current item exists", () => {
+    const first = { label: "First", value: "first" };
+    const fallback = { label: "Default", value: "default", isDefault: true };
+
+    expect(preferredActiveItem([first, fallback])?.value).toBe("default");
+  });
+
+  test("falls back to the first item when no current or default item exists", () => {
+    const first = { label: "First", value: "first" };
+    const second = { label: "Second", value: "second" };
+
+    expect(preferredActiveItem([first, second])?.value).toBe("first");
   });
 });
