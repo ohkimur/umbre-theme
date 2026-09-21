@@ -17,6 +17,7 @@ import {
   defaultSyntax,
   defaultTerminal,
 } from "@/config.ts";
+import { markdownColors } from "@/theme/markdown.ts";
 import { createThemeModel } from "@/theme/model.ts";
 import { themeFileName, themeLabel } from "@/theme/naming.ts";
 import { semanticTokenColors } from "@/theme/semantic.ts";
@@ -84,7 +85,7 @@ export const createThemeDocument = (
   name,
   type: model.mode,
   semanticHighlighting: true,
-  colors: workbenchColors(model),
+  colors: { ...workbenchColors(model), ...markdownColors(model) },
   tokenColors: tokenColors(model),
   semanticTokenColors: semanticTokenColors(model),
 });

@@ -72,5 +72,6 @@ const withBorderIntensity = (colors: ColorMap, opacity: number): ColorMap => {
 
 const isBorderColorKey = (key: string): boolean => /border|outline/i.test(key);
 
+/** Keys that follow their own rules: window frames, and quote bars, which are content rather than chrome. */
 const isWindowFrameBorderKey = (key: string): boolean =>
-  key === "window.activeBorder" || key === "window.inactiveBorder";
+  key === "window.activeBorder" || key === "window.inactiveBorder" || key === "textBlockQuote.border";

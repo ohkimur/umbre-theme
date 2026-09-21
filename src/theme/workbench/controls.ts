@@ -1,3 +1,4 @@
+import { markdownTextColors } from "@/theme/markdown.ts";
 import type { ThemeModel } from "@/theme/model.ts";
 import { transparent } from "@/theme/palette.ts";
 import type { ColorMap } from "@/theme/types.ts";
@@ -20,12 +21,4 @@ export const controlColors = ({ accent, surfaces }: ThemeModel): ColorMap => ({
   "checkbox.selectBorder": accent.border,
 });
 
-export const textColors = ({ accent, surfaces }: ThemeModel): ColorMap => ({
-  "textLink.foreground": accent.main,
-  "textLink.activeForeground": accent.hover,
-  "textBlockQuote.background": surfaces.chrome3,
-  "textBlockQuote.border": surfaces.lineStrong,
-  "textCodeBlock.background": surfaces.chrome3,
-  "textPreformat.foreground": accent.main,
-  "textSeparator.foreground": surfaces.line,
-});
+export const textColors = (model: ThemeModel): ColorMap => markdownTextColors(model);

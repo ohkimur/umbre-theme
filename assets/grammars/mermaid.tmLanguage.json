@@ -1,0 +1,200 @@
+{
+  "$comment": "A compact Mermaid grammar. Scopes reuse standard names so Umbre's syntax colors apply.",
+  "scopeName": "source.umbre-mermaid",
+  "patterns": [
+    {
+      "include": "#directive"
+    },
+    {
+      "include": "#comment"
+    },
+    {
+      "include": "#diagram"
+    },
+    {
+      "include": "#styling"
+    },
+    {
+      "include": "#class-shorthand"
+    },
+    {
+      "include": "#string"
+    },
+    {
+      "include": "#arrow"
+    },
+    {
+      "include": "#edge-label"
+    },
+    {
+      "include": "#node-label"
+    },
+    {
+      "include": "#keyword"
+    },
+    {
+      "include": "#number"
+    }
+  ],
+  "repository": {
+    "directive": {
+      "begin": "%%\\{",
+      "end": "\\}%%",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.definition.directive.begin.mermaid"
+        }
+      },
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.directive.end.mermaid"
+        }
+      },
+      "name": "meta.directive.mermaid",
+      "patterns": [
+        {
+          "match": "\\b(init|initialize)\\b(?=\\s*:)",
+          "name": "keyword.other.directive.mermaid"
+        },
+        {
+          "match": "(\"[^\"]*\")(?=\\s*:)",
+          "name": "support.type.property-name.mermaid"
+        },
+        {
+          "include": "#string"
+        },
+        {
+          "include": "#number"
+        },
+        {
+          "match": "\\b(true|false|null)\\b",
+          "name": "constant.language.mermaid"
+        }
+      ]
+    },
+    "comment": {
+      "match": "%%(?!\\{).*$",
+      "name": "comment.line.percentage.mermaid"
+    },
+    "diagram": {
+      "match": "^\\s*(flowchart|graph|sequenceDiagram|classDiagram(?:-v2)?|stateDiagram(?:-v2)?|erDiagram|gantt|pie|journey|gitGraph|mindmap|timeline|quadrantChart|requirementDiagram|C4Context|C4Container|C4Component|C4Dynamic|C4Deployment|sankey(?:-beta)?|xychart(?:-beta)?|block(?:-beta)?|packet(?:-beta)?|architecture(?:-beta)?|kanban|radar(?:-beta)?|treemap(?:-beta)?)\\b(?:\\s+(TB|TD|BT|RL|LR))?",
+      "captures": {
+        "1": {
+          "name": "storage.type.diagram.mermaid"
+        },
+        "2": {
+          "name": "constant.language.direction.mermaid"
+        }
+      }
+    },
+    "styling": {
+      "begin": "^\\s*(style|classDef|linkStyle|class)\\b",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.other.style.mermaid"
+        }
+      },
+      "end": "$",
+      "patterns": [
+        {
+          "match": "#[0-9a-fA-F]{3,8}\\b",
+          "name": "constant.other.color.mermaid"
+        },
+        {
+          "match": "\\b([a-zA-Z-]+)(:)",
+          "captures": {
+            "1": {
+              "name": "support.type.property-name.mermaid"
+            },
+            "2": {
+              "name": "punctuation.separator.key-value.mermaid"
+            }
+          }
+        },
+        {
+          "include": "#number"
+        },
+        {
+          "match": "[,;]",
+          "name": "punctuation.separator.mermaid"
+        },
+        {
+          "match": "\\b(default)\\b",
+          "name": "constant.language.mermaid"
+        },
+        {
+          "match": "[A-Za-z_][\\w-]*",
+          "name": "entity.name.type.class.mermaid"
+        }
+      ]
+    },
+    "class-shorthand": {
+      "match": "(:::)([A-Za-z_][\\w-]*)",
+      "captures": {
+        "1": {
+          "name": "punctuation.separator.mermaid"
+        },
+        "2": {
+          "name": "entity.name.type.class.mermaid"
+        }
+      }
+    },
+    "string": {
+      "match": "\"[^\"]*\"",
+      "name": "string.quoted.double.mermaid"
+    },
+    "edge-label": {
+      "match": "(\\|)([^|]*)(\\|)",
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.label.mermaid"
+        },
+        "2": {
+          "name": "string.unquoted.label.mermaid"
+        },
+        "3": {
+          "name": "punctuation.definition.label.mermaid"
+        }
+      }
+    },
+    "node-label": {
+      "patterns": [
+        {
+          "match": "(\\[\\[|\\[\\(|\\(\\[|\\[/|\\[\\\\|\\[|\\(\\(|\\(|\\{\\{|\\{|>)([^\\[\\](){}]*?)(\\]\\]|\\)\\]|\\]\\)|/\\]|\\\\\\]|\\]|\\)\\)|\\)|\\}\\}|\\})",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.label.begin.mermaid"
+            },
+            "2": {
+              "patterns": [
+                {
+                  "include": "#string"
+                },
+                {
+                  "match": ".+",
+                  "name": "string.unquoted.label.mermaid"
+                }
+              ]
+            },
+            "3": {
+              "name": "punctuation.definition.label.end.mermaid"
+            }
+          }
+        }
+      ]
+    },
+    "arrow": {
+      "$comment": "Longest operators first: ER relationships, then sequence arrows, then flowchart links.",
+      "match": "[|}o]{1,2}(?:--|\\.\\.)[|{o]{1,2}|<<-{1,2}>>|-{1,2}>>|-{1,2}[)x]|<?(?:-{2,}|={2,}|-\\.+-)[>ox]?|~{3}",
+      "name": "keyword.operator.arrow.mermaid"
+    },
+    "keyword": {
+      "match": "\\b(subgraph|end|direction|click|call|href|participant|actor|as|note|over|left of|right of|loop|alt|else|opt|par|and|critical|break|rect|activate|deactivate|autonumber|title|section|dateFormat|axisFormat|tickInterval|excludes|includes|todayMarker|state|accTitle|accDescr|box|create|destroy|namespace|commit|branch|checkout|merge|cherry-pick|id|tag|type)\\b",
+      "name": "keyword.control.mermaid"
+    },
+    "number": {
+      "match": "(?<![\\w#-])-?\\d+(?:\\.\\d+)?(?:px|em|rem|%|d|h|m|s|w)?\\b",
+      "name": "constant.numeric.mermaid"
+    }
+  }
+}

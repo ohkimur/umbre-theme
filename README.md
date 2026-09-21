@@ -66,8 +66,21 @@ Changes preview while you choose. Applying a theme keeps your editor settings cl
 - **Umbre: Toggle Opposite Mode** — jump to the matching light/dark opposite of your current setup.
 - **Umbre: Choose Font** — preview and choose a recommended coding font.
 
+## Markdown
+
+Markdown previews and the Markdown editor share Umbre's colors. A few renderer differences remain; see [docs/markdown.md](docs/markdown.md).
+
+- **Your colors** — links use your accent, code uses your syntax scheme.
+- **Easy reading** — clear headings, calm text, and tables with visible lines.
+- **Mermaid** — diagram code is highlighted too.
+- **Folder trees** — `├──` listings get quiet guides, colored folders, and muted comments in the preview.
+
 ## Nice pairing
 
-Umbre pairs well with [Symbols](https://marketplace.visualstudio.com/items?itemName=miguelsolorio.symbols), a simple file icon theme for VS Code and Cursor.
+These extensions work well with Umbre. All are optional.
 
-After you finish Umbre setup, Umbre can help install Symbols and apply it when you choose **Use Symbols**.
+- [Symbols](https://marketplace.visualstudio.com/items?itemName=miguelsolorio.symbols) — simple file icons.
+- [GitHub Markdown Preview](https://marketplace.visualstudio.com/items?itemName=bierner.github-markdown-preview) — GitHub-style Markdown, in Umbre's colors.
+- [Markdown Preview VS Code Highlighting](https://marketplace.visualstudio.com/items?itemName=bierner.markdown-shiki) — code in the preview looks exactly like the editor.
+
+After setup, Umbre offers to install any you don't have, or to enable any you've turned off.

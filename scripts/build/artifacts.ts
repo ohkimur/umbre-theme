@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 
 import { commandContributions, type CommandContribution } from "@/extension/contributions.ts";
 import { commandIds, product } from "@/product.ts";
+import { markdownColorContributions, type ColorContribution } from "@/theme/markdown.ts";
 import type { BuiltTheme, ThemeContribution } from "@/theme/types.ts";
 import { copyDir, copyFile, ensureDir } from "@/utils/fs.ts";
 import { writeJson } from "@/utils/json.ts";
@@ -10,8 +11,11 @@ import {
   distDir,
   distFontsPath,
   fontsPath,
+  grammarsPath,
+  distGrammarsPath,
   licensePath,
   logoPath,
+  markdownPreviewStylePath,
   readmePath,
   screenshotsPath,
   rootDir,
@@ -52,6 +56,11 @@ type ExtensionManifest = ExtensionPackageMetadata & {
       }>;
     };
     themes: ThemeContribution[];
+    colors: ColorContribution[];
+    languages: Array<{ id: string; aliases: string[]; extensions: string[] }>;
+    grammars: Array<{ language?: string; scopeName: string; path: string; injectTo?: string[] }>;
+    "markdown.previewStyles": string[];
+    "markdown.markdownItPlugins": boolean;
   };
 };
 
@@ -94,7 +103,7 @@ export const createExtensionManifest = (
     vscode: "^1.100.0",
   },
   categories: ["Themes"],
-  keywords: ["theme", "dark theme", "light theme", "black", "umbre"],
+  keywords: ["theme", "dark theme", "light theme", "black", "umbre", "markdown"],
   contributes: {
     commands: commandContributions(),
     menus: {
@@ -114,6 +123,24 @@ export const createExtensionManifest = (
       ],
     },
     themes: themes.map((theme) => theme.contribution),
+    colors: markdownColorContributions(),
+    // Mermaid highlighting: a language id for the Markdown editor's fences and `.mmd` files,
+    // plus an injection for ```mermaid fences in Markdown source.
+    languages: [{ id: "mermaid", aliases: ["Mermaid"], extensions: [".mmd", ".mermaid"] }],
+    grammars: [
+      {
+        language: "mermaid",
+        scopeName: "source.umbre-mermaid",
+        path: "./assets/grammars/mermaid.tmLanguage.json",
+      },
+      {
+        scopeName: "markdown.umbre-mermaid.codeblock",
+        path: "./assets/grammars/markdown-mermaid.tmLanguage.json",
+        injectTo: ["text.html.markdown"],
+      },
+    ],
+    "markdown.previewStyles": ["./assets/markdown-preview.css"],
+    "markdown.markdownItPlugins": true,
   },
 });
 
@@ -153,6 +180,8 @@ const writeExtensionArtifacts = async (): Promise<void> => {
     copyFile(logoPath, new URL("logo.png", distAssetsDir)),
     copyFile(screenshotsPath, new URL("screenshots.png", distAssetsDir)),
     copyDir(fontsPath, distFontsPath),
+    copyDir(grammarsPath, distGrammarsPath),
+    copyFile(markdownPreviewStylePath, new URL("markdown-preview.css", distAssetsDir)),
     copyFile(readmePath, new URL("README.md", distDir)),
     copyFile(licensePath, new URL("LICENSE", distDir)),
     writeJson(new URL("package.json", distDir), createExtensionManifest(packageMetadata, themes)),

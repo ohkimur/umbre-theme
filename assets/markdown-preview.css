@@ -1,0 +1,522 @@
+/*
+ * Umbre reading styles for VS Code's Markdown previews (built-in, and GitHub Markdown Preview when
+ * installed). The Markdown editor is styled by the same theme colors directly, so both look alike:
+ * links, inline code, code blocks, quotes, and separators use VS Code's standard text* colors, and
+ * everything else uses Umbre's `umbreMarkdown.*` colors (see src/theme/markdown.ts).
+ *
+ * Rules only apply while Umbre is active. `:root body[…]` keeps them ahead of each preview's own
+ * styles without `!important`.
+ */
+
+/* Surface and measure */
+
+:root body[data-vscode-theme-id="Umbre"] {
+  color: var(--vscode-umbreMarkdown-text);
+  background-color: var(--vscode-editor-background);
+  /* A reading size two steps above the Markdown font setting (16px by default), in both previews. */
+  --umbre-text: calc(var(--markdown-font-size, 14px) + 2px);
+  /* One spacing unit (the body text size) for every vertical gap, so the rhythm stays consistent. */
+  --umbre-space: var(--umbre-text);
+  font-size: var(--umbre-text);
+  line-height: 1.65;
+}
+
+/* Roughly 80 characters per line, scaling with the Markdown font size. */
+:root body[data-vscode-theme-id="Umbre"].vscode-body:not(:has(.github-markdown-body)),
+:root body[data-vscode-theme-id="Umbre"] .github-markdown-content {
+  max-width: 46em;
+  margin-inline: auto;
+}
+
+/* GitHub Markdown Preview: same reading size, font and point its palette at Umbre's. */
+:root body[data-vscode-theme-id="Umbre"] .github-markdown-body {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  color: var(--vscode-umbreMarkdown-text);
+  background-color: var(--vscode-editor-background);
+  --fgColor-default: var(--vscode-umbreMarkdown-text) !important;
+  --fgColor-muted: var(--vscode-umbreMarkdown-muted) !important;
+  --fgColor-accent: var(--vscode-textLink-foreground) !important;
+  --fgColor-success: var(--vscode-umbreMarkdown-tip) !important;
+  --fgColor-attention: var(--vscode-umbreMarkdown-warning) !important;
+  --fgColor-danger: var(--vscode-umbreMarkdown-caution) !important;
+  --fgColor-done: var(--vscode-umbreMarkdown-important) !important;
+  --bgColor-default: var(--vscode-editor-background) !important;
+  --bgColor-muted: var(--vscode-textCodeBlock-background) !important;
+  --bgColor-neutral-muted: var(--vscode-textPreformat-background) !important;
+  --borderColor-default: var(--vscode-umbreMarkdown-rule) !important;
+  --borderColor-muted: var(--vscode-umbreMarkdown-softRule) !important;
+  --borderColor-neutral-muted: var(--vscode-umbreMarkdown-softRule) !important;
+  --borderColor-accent-emphasis: var(--vscode-umbreMarkdown-note) !important;
+  --borderColor-success-emphasis: var(--vscode-umbreMarkdown-tip) !important;
+  --borderColor-attention-emphasis: var(--vscode-umbreMarkdown-warning) !important;
+  --borderColor-danger-emphasis: var(--vscode-umbreMarkdown-caution) !important;
+  --borderColor-done-emphasis: var(--vscode-umbreMarkdown-important) !important;
+  --selection-bgColor: var(--vscode-editor-selectionBackground) !important;
+  --focus-outlineColor: var(--vscode-focusBorder) !important;
+}
+
+/* Native controls and scrollbars follow Umbre's mode, even if GitHub's preview picks another variant. */
+:root body[data-vscode-theme-id="Umbre"].vscode-dark .github-markdown-body {
+  color-scheme: dark !important;
+}
+
+:root body[data-vscode-theme-id="Umbre"].vscode-light .github-markdown-body {
+  color-scheme: light !important;
+}
+
+:root body[data-vscode-theme-id="Umbre"] > :first-child,
+:root body[data-vscode-theme-id="Umbre"] .github-markdown-content > :first-child {
+  margin-top: 0;
+}
+
+/* Headings: the Markdown editor's scale, lots of room above and a steady gap to the content they lead. */
+
+:root body[data-vscode-theme-id="Umbre"] :is(h1, h2, h3, h4, h5, h6) {
+  margin: calc(var(--umbre-space) * 2.4) 0 var(--umbre-space);
+  color: var(--vscode-umbreMarkdown-heading);
+  font-weight: 600;
+  line-height: 1.3;
+  text-wrap: balance;
+}
+
+:root body[data-vscode-theme-id="Umbre"] :is(h1, h2) {
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid var(--vscode-textSeparator-foreground);
+}
+
+:root body[data-vscode-theme-id="Umbre"] h1 {
+  font-size: 1.75em;
+}
+
+:root body[data-vscode-theme-id="Umbre"] h2 {
+  margin-top: calc(var(--umbre-space) * 2.8);
+  font-size: 1.4em;
+}
+
+:root body[data-vscode-theme-id="Umbre"] h3 {
+  font-size: 1.2em;
+}
+
+:root body[data-vscode-theme-id="Umbre"] h4 {
+  font-size: 1em;
+}
+
+:root body[data-vscode-theme-id="Umbre"] :is(h5, h6) {
+  font-size: 1em;
+  color: var(--vscode-umbreMarkdown-muted);
+}
+
+:root body[data-vscode-theme-id="Umbre"] :is(h1, h2, h3, h4, h5, h6) + :is(h2, h3, h4, h5, h6) {
+  margin-top: calc(var(--umbre-space) * 1.4);
+}
+
+/*
+ * Vertical rhythm: text blocks sit 1.1 units apart; larger blocks (tables, code, quotes, alerts,
+ * details, diagrams) get 1.6 units around them. Right after a heading, blocks start at the
+ * heading's gap so the heading stays attached to its content.
+ */
+
+:root body[data-vscode-theme-id="Umbre"] :is(p, ul, ol, dl) {
+  margin: 0 0 calc(var(--umbre-space) * 1.1);
+}
+
+:root
+  body[data-vscode-theme-id="Umbre"]
+  :is(table, pre, blockquote, details, .markdown-alert, .mermaid-wrapper) {
+  margin: calc(var(--umbre-space) * 1.6) 0;
+}
+
+:root
+  body[data-vscode-theme-id="Umbre"]
+  :is(h1, h2, h3, h4, h5, h6)
+  + :is(p, ul, ol, dl, table, pre, blockquote, details, .markdown-alert, .mermaid-wrapper) {
+  margin-top: 0;
+}
+
+:root body[data-vscode-theme-id="Umbre"] :is(strong, b) {
+  color: var(--vscode-umbreMarkdown-heading);
+  font-weight: 600;
+}
+
+:root body[data-vscode-theme-id="Umbre"] li + li,
+:root body[data-vscode-theme-id="Umbre"] li > :is(ul, ol) {
+  margin-top: 0.25em;
+}
+
+:root body[data-vscode-theme-id="Umbre"] li::marker {
+  color: var(--vscode-umbreMarkdown-muted);
+}
+
+:root body[data-vscode-theme-id="Umbre"] mark {
+  padding: 0 0.15em;
+  color: inherit;
+  background-color: color-mix(in srgb, var(--vscode-umbreMarkdown-warning) 28%, transparent);
+  border-radius: 3px;
+}
+
+:root body[data-vscode-theme-id="Umbre"] hr {
+  height: 1px;
+  margin: calc(var(--umbre-space) * 2.4) 0;
+  border: 0;
+  background-color: var(--vscode-textSeparator-foreground);
+}
+
+:root body[data-vscode-theme-id="Umbre"] a {
+  color: var(--vscode-textLink-foreground);
+  text-decoration-color: color-mix(in srgb, var(--vscode-textLink-foreground) 40%, transparent);
+  text-underline-offset: 0.2em;
+}
+
+:root body[data-vscode-theme-id="Umbre"] a:is(:hover, :active) {
+  color: var(--vscode-textLink-activeForeground);
+  text-decoration-color: currentColor;
+}
+
+:root body[data-vscode-theme-id="Umbre"] :is(a, summary):focus-visible {
+  outline: 1px solid var(--vscode-focusBorder);
+  outline-offset: 2px;
+}
+
+/* Code */
+
+:root body[data-vscode-theme-id="Umbre"] code {
+  font-family: var(--vscode-editor-font-family, ui-monospace, monospace);
+  font-size: 0.95em;
+}
+
+:root body[data-vscode-theme-id="Umbre"] :not(pre) > code {
+  padding: 0.1em 0.35em;
+  color: var(--vscode-textPreformat-foreground);
+  background-color: var(--vscode-textPreformat-background);
+  border-radius: 4px;
+}
+
+:root body[data-vscode-theme-id="Umbre"] pre {
+  /* GitHub shrinks code blocks to 85%; code size comes from the `code` rule in both previews. */
+  font-size: inherit;
+  padding: var(--umbre-space) calc(var(--umbre-space) * 1.25);
+  color: var(--vscode-umbreMarkdown-syntaxForeground);
+  background-color: var(--vscode-textCodeBlock-background);
+  border: 0;
+  border-radius: 6px;
+  line-height: 1.75;
+  tab-size: 2;
+}
+
+:root body[data-vscode-theme-id="Umbre"] pre code {
+  padding: 0;
+  line-height: inherit;
+  color: inherit;
+  background: transparent;
+}
+
+/*
+ * With Markdown Preview VS Code Highlighting installed, code uses the editor's own highlighter instead.
+ */
+
+:root body[data-vscode-theme-id="Umbre"] pre code :is(.hljs-comment, .hljs-quote, .hljs-doctag) {
+  color: var(--vscode-umbreMarkdown-syntaxComment);
+  font-style: italic;
+}
+
+:root
+  body[data-vscode-theme-id="Umbre"]
+  pre
+  code
+  :is(.hljs-keyword, .hljs-selector-tag, .hljs-meta .hljs-keyword) {
+  color: var(--vscode-umbreMarkdown-syntaxKeyword);
+}
+
+:root
+  body[data-vscode-theme-id="Umbre"]
+  pre
+  code
+  :is(.hljs-template-tag, .hljs-template-variable, .hljs-subst) {
+  color: var(--vscode-umbreMarkdown-syntaxKeyword);
+}
+
+:root body[data-vscode-theme-id="Umbre"] pre code :is(.hljs-operator) {
+  color: var(--vscode-umbreMarkdown-syntaxOperator);
+}
+
+:root
+  body[data-vscode-theme-id="Umbre"]
+  pre
+  code
+  :is(.hljs-string, .hljs-meta .hljs-string, .hljs-char.escape_) {
+  color: var(--vscode-umbreMarkdown-syntaxString);
+}
+
+:root body[data-vscode-theme-id="Umbre"] pre code :is(.hljs-regexp) {
+  color: var(--vscode-umbreMarkdown-syntaxRegexp);
+}
+
+:root
+  body[data-vscode-theme-id="Umbre"]
+  pre
+  code
+  :is(.hljs-number, .hljs-literal, .hljs-symbol, .hljs-variable.constant_) {
+  color: var(--vscode-umbreMarkdown-syntaxConstant);
+}
+
+:root body[data-vscode-theme-id="Umbre"] pre code :is(.hljs-variable.language_) {
+  color: var(--vscode-umbreMarkdown-syntaxTag);
+  font-style: italic;
+}
+
+:root body[data-vscode-theme-id="Umbre"] pre code :is(.hljs-title, .hljs-title.function_, .hljs-section) {
+  color: var(--vscode-umbreMarkdown-syntaxFunction);
+}
+
+:root body[data-vscode-theme-id="Umbre"] pre code :is(.hljs-type, .hljs-built_in) {
+  color: var(--vscode-umbreMarkdown-syntaxType);
+}
+
+:root body[data-vscode-theme-id="Umbre"] pre code :is(.hljs-title.class_, .hljs-title.class_.inherited__) {
+  color: var(--vscode-umbreMarkdown-syntaxClass);
+}
+
+:root body[data-vscode-theme-id="Umbre"] pre code :is(.hljs-name, .hljs-selector-id, .hljs-selector-class) {
+  color: var(--vscode-umbreMarkdown-syntaxTag);
+}
+
+:root
+  body[data-vscode-theme-id="Umbre"]
+  pre
+  code
+  :is(.hljs-attr, .hljs-attribute, .hljs-selector-attr, .hljs-selector-pseudo) {
+  color: var(--vscode-umbreMarkdown-syntaxAttribute);
+}
+
+:root body[data-vscode-theme-id="Umbre"] pre code :is(.hljs-property) {
+  color: var(--vscode-umbreMarkdown-syntaxProperty);
+}
+
+:root body[data-vscode-theme-id="Umbre"] pre code :is(.hljs-params) {
+  color: var(--vscode-umbreMarkdown-syntaxParameter);
+}
+
+:root body[data-vscode-theme-id="Umbre"] pre code :is(.hljs-meta, .hljs-link) {
+  color: var(--vscode-umbreMarkdown-syntaxSpecial);
+}
+
+:root body[data-vscode-theme-id="Umbre"] pre code :is(.hljs-emphasis, .hljs-strong, .hljs-bullet) {
+  color: var(--vscode-umbreMarkdown-syntaxMarkup);
+}
+
+:root body[data-vscode-theme-id="Umbre"] pre code .hljs-addition {
+  color: var(--vscode-umbreMarkdown-syntaxAdded);
+  background-color: color-mix(in srgb, var(--vscode-umbreMarkdown-syntaxAdded) 12%, transparent);
+}
+
+:root body[data-vscode-theme-id="Umbre"] pre code .hljs-deletion {
+  color: var(--vscode-umbreMarkdown-syntaxRemoved);
+  background-color: color-mix(in srgb, var(--vscode-umbreMarkdown-syntaxRemoved) 12%, transparent);
+}
+
+/* Directory trees in plain fences: quiet guides, folders in the type color, muted comments. */
+
+:root body[data-vscode-theme-id="Umbre"] pre.umbre-file-tree {
+  /* Trees keep their columns; long lines scroll instead of wrapping. */
+  white-space: pre;
+  overflow-x: auto;
+}
+
+:root body[data-vscode-theme-id="Umbre"] .umbre-tree-guide {
+  color: var(--vscode-umbreMarkdown-marker);
+}
+
+:root body[data-vscode-theme-id="Umbre"] .umbre-tree-folder {
+  color: var(--vscode-umbreMarkdown-syntaxType);
+}
+
+:root body[data-vscode-theme-id="Umbre"] .umbre-tree-file {
+  color: var(--vscode-umbreMarkdown-text);
+}
+
+:root body[data-vscode-theme-id="Umbre"] .umbre-tree-comment {
+  color: var(--vscode-umbreMarkdown-syntaxComment);
+  font-style: italic;
+}
+
+/* Keyboard keys look the same with or without GitHub Markdown Preview. */
+
+:root body[data-vscode-theme-id="Umbre"] kbd {
+  padding: 0.1em 0.4em;
+  font-family: var(--vscode-editor-font-family, ui-monospace, monospace);
+  font-size: 0.85em;
+  color: var(--vscode-umbreMarkdown-heading);
+  background-color: var(--vscode-textCodeBlock-background);
+  border: 1px solid var(--vscode-umbreMarkdown-softRule);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+}
+
+/*
+ * Tables: a soft outline and header band, roomy cells, and subtle row and column lines. Columns size and wrap
+ * naturally, and alignment from the Markdown source (inline styles) wins.
+ */
+
+:root body[data-vscode-theme-id="Umbre"] table {
+  /* GitHub Markdown Preview forces block, max-content tables; return to natural table layout. */
+  display: table;
+  width: auto;
+  max-width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid var(--vscode-umbreMarkdown-tableRule);
+  border-radius: 8px;
+  overflow: hidden;
+  font-variant-numeric: tabular-nums;
+}
+
+:root body[data-vscode-theme-id="Umbre"] table :is(th, td) {
+  padding: 0.6rem 0.9rem;
+  border: 0;
+  border-bottom: 1px solid var(--vscode-umbreMarkdown-tableRule);
+  vertical-align: top;
+}
+
+:root body[data-vscode-theme-id="Umbre"] table :is(th, td) + :is(th, td) {
+  border-left: 1px solid var(--vscode-umbreMarkdown-tableRule);
+}
+
+:root body[data-vscode-theme-id="Umbre"] table tr:last-child > td {
+  border-bottom: 0;
+}
+
+:root body[data-vscode-theme-id="Umbre"] table th {
+  color: var(--vscode-umbreMarkdown-heading);
+  background-color: var(--vscode-umbreMarkdown-tableHeader);
+  font-weight: 600;
+  text-align: start;
+}
+
+:root body[data-vscode-theme-id="Umbre"] table tr {
+  background-color: transparent;
+  border: 0;
+}
+
+:root body[data-vscode-theme-id="Umbre"] table td > :last-child {
+  margin-bottom: 0;
+}
+
+/* Quotes and alerts share the editor's quote surface; alerts add their color to the bar and title. */
+
+:root body[data-vscode-theme-id="Umbre"] :is(blockquote, .markdown-alert) {
+  padding: 0.6rem 1rem;
+  color: var(--vscode-umbreMarkdown-text);
+  background-color: var(--vscode-textBlockQuote-background);
+  border-left: 3px solid var(--vscode-textBlockQuote-border);
+  border-radius: 0 4px 4px 0;
+}
+
+:root body[data-vscode-theme-id="Umbre"] :is(blockquote, .markdown-alert) > :last-child {
+  margin-bottom: 0;
+}
+
+:root body[data-vscode-theme-id="Umbre"] .markdown-alert .markdown-alert-title {
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+}
+
+:root body[data-vscode-theme-id="Umbre"] .markdown-alert .markdown-alert-title svg {
+  fill: currentColor;
+}
+
+:root body[data-vscode-theme-id="Umbre"] .markdown-alert.markdown-alert-note {
+  border-left-color: var(--vscode-umbreMarkdown-note);
+}
+
+:root body[data-vscode-theme-id="Umbre"] .markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--vscode-umbreMarkdown-note);
+}
+
+:root body[data-vscode-theme-id="Umbre"] .markdown-alert.markdown-alert-tip {
+  border-left-color: var(--vscode-umbreMarkdown-tip);
+}
+
+:root body[data-vscode-theme-id="Umbre"] .markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--vscode-umbreMarkdown-tip);
+}
+
+:root body[data-vscode-theme-id="Umbre"] .markdown-alert.markdown-alert-important {
+  border-left-color: var(--vscode-umbreMarkdown-important);
+}
+
+:root body[data-vscode-theme-id="Umbre"] .markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--vscode-umbreMarkdown-important);
+}
+
+:root body[data-vscode-theme-id="Umbre"] .markdown-alert.markdown-alert-warning {
+  border-left-color: var(--vscode-umbreMarkdown-warning);
+}
+
+:root body[data-vscode-theme-id="Umbre"] .markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--vscode-umbreMarkdown-warning);
+}
+
+:root body[data-vscode-theme-id="Umbre"] .markdown-alert.markdown-alert-caution {
+  border-left-color: var(--vscode-umbreMarkdown-caution);
+}
+
+:root body[data-vscode-theme-id="Umbre"] .markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--vscode-umbreMarkdown-caution);
+}
+
+/* Footnotes: one quiet rule and some room above, in slightly smaller muted text. */
+
+:root body[data-vscode-theme-id="Umbre"] .footnotes-sep {
+  display: none;
+}
+
+:root body[data-vscode-theme-id="Umbre"] .footnotes {
+  margin-top: calc(var(--umbre-space) * 2.8);
+  padding-top: calc(var(--umbre-space) * 1.2);
+  border-top: 1px solid var(--vscode-textSeparator-foreground);
+  color: var(--vscode-umbreMarkdown-muted);
+  font-size: 0.92em;
+}
+
+:root body[data-vscode-theme-id="Umbre"] .footnotes li + li {
+  margin-top: 0.6em;
+}
+
+/* Details: no frame, just the summary and a little room. */
+
+:root body[data-vscode-theme-id="Umbre"] details {
+  padding: 0.25rem 0;
+}
+
+:root body[data-vscode-theme-id="Umbre"] summary {
+  color: var(--vscode-umbreMarkdown-heading);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+:root body[data-vscode-theme-id="Umbre"] details[open] > summary {
+  margin-bottom: 0.6rem;
+}
+
+/* Mermaid diagrams render natively: VS Code's Mermaid theme reads Umbre's workbench colors. */
+
+/* Mermaid sizes boxes for VS Code's UI font, so diagrams keep it rather than the larger reading size. */
+:root body[data-vscode-theme-id="Umbre"] :is(.mermaid, .mermaid-wrapper) {
+  font-size: var(--vscode-font-size, 13px);
+  line-height: normal;
+}
+
+/* Sequence numbers sit on a text-colored circle; the page color keeps them readable in both modes. */
+:root body[data-vscode-theme-id="Umbre"] .mermaid .sequenceNumber {
+  fill: var(--vscode-editor-background) !important;
+}
+
+:root body[data-vscode-theme-id="Umbre"] input[type="checkbox"] {
+  accent-color: var(--vscode-textLink-foreground);
+}
+
+:root body[data-vscode-theme-id="Umbre"] img {
+  border-radius: 4px;
+}
