@@ -1,3 +1,9 @@
+## 0.5.3 (2026-09-21)
+
+### Bug Fixes
+
+- **markdown:** lay out previews in the Markdown editor's column ([5c81a4e](https://github.com/ohkimur/umbre-theme/commit/5c81a4ec9176ad8c0bceb713f08002fc3f760d03))
+
 ## 0.5.2 (2026-09-21)
 
 ### Bug Fixes
