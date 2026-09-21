@@ -956,7 +956,7 @@ flowchart TD
   o --> p@{ shape: notch-rect, label: "Card" }
   p --> q@{ shape: bow-rect, label: "Stored data" }
   q --> r@{ shape: fr-rect, label: "Framed process" }
-  r --> s@{ shape: divided-rect, label: "Divided process" }
+  r --> s@{ shape: div-rect, label: "Divided process" }
   s --> t@{ shape: delay, label: "Delay" }
   t --> u@{ shape: hourglass, label: "Collate" }
   u --> v@{ shape: bolt, label: "Communication" }
