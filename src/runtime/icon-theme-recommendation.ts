@@ -9,11 +9,12 @@ let dismissedThisSession = false;
 
 export const suggestSymbolsIconTheme = async (context: vscode.ExtensionContext): Promise<void> => {
   const symbols = product.recommendedExtensions.symbols;
-  if (activeIconTheme() === symbols.iconThemeId) return;
+  // The setting can name Symbols after the extension was removed or disabled, so check both.
+  if (activeIconTheme() === symbols.iconThemeId && vscode.extensions.getExtension(symbols.id)) return;
   if (dismissedThisSession) return;
 
   const outcome = await recommendExtension(context, symbols);
-  if (outcome !== "declined") await suggestUseIconTheme();
+  if (outcome !== "declined" && activeIconTheme() !== symbols.iconThemeId) await suggestUseIconTheme();
 };
 
 const suggestUseIconTheme = async (): Promise<void> => {

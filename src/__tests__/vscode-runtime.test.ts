@@ -179,12 +179,24 @@ describe("Umbre Symbols recommendation", () => {
   });
 
   test("skips the recommendation when Symbols is already active", async () => {
+    symbolsInstalled = true;
     activeIconTheme = "symbols";
 
     await suggestSymbolsIconTheme(context);
 
     expect(informationMessages).toHaveLength(0);
     expect(commandCalls).toHaveLength(0);
+    expect(updatedIconTheme).toBeUndefined();
+  });
+
+  test("offers Symbols when the icon setting names it but the extension is missing", async () => {
+    activeIconTheme = "symbols";
+    informationChoices = ["Install Symbols"];
+
+    await suggestSymbolsIconTheme(context);
+
+    expect(informationMessages).toEqual(["Umbre pairs well with Symbols, a simple file icon theme."]);
+    expect(commandCalls).toEqual([["workbench.extensions.installExtension", "miguelsolorio.symbols"]]);
     expect(updatedIconTheme).toBeUndefined();
   });
 });
