@@ -77,7 +77,7 @@
       "name": "comment.line.percentage.mermaid"
     },
     "diagram": {
-      "match": "^\\s*(flowchart|graph|sequenceDiagram|classDiagram(?:-v2)?|stateDiagram(?:-v2)?|erDiagram|gantt|pie|journey|gitGraph|mindmap|timeline|quadrantChart|requirementDiagram|C4Context|C4Container|C4Component|C4Dynamic|C4Deployment|sankey(?:-beta)?|xychart(?:-beta)?|block(?:-beta)?|packet(?:-beta)?|architecture(?:-beta)?|kanban|radar(?:-beta)?|treemap(?:-beta)?)\\b(?:\\s+(TB|TD|BT|RL|LR))?",
+      "match": "(?:^|\\G)\\s*(flowchart|graph|sequenceDiagram|classDiagram(?:-v2)?|stateDiagram(?:-v2)?|erDiagram|gantt|pie|journey|gitGraph|mindmap|timeline|quadrantChart|requirementDiagram|C4Context|C4Container|C4Component|C4Dynamic|C4Deployment|sankey(?:-beta)?|xychart(?:-beta)?|block(?:-beta)?|packet(?:-beta)?|architecture(?:-beta)?|kanban|radar(?:-beta)?|treemap(?:-beta)?)\\b(?:\\s+(TB|TD|BT|RL|LR))?",
       "captures": {
         "1": {
           "name": "storage.type.diagram.mermaid"
@@ -88,7 +88,7 @@
       }
     },
     "styling": {
-      "begin": "^\\s*(style|classDef|linkStyle|class)\\b",
+      "begin": "(?:^|\\G)\\s*(style|classDef|linkStyle|class)\\b",
       "beginCaptures": {
         "1": {
           "name": "keyword.other.style.mermaid"
