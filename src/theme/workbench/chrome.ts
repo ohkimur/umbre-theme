@@ -1,26 +1,31 @@
+import { separatorColor } from "@/theme/markdown.ts";
 import type { ThemeModel } from "@/theme/model.ts";
 import { readableOn, transparent, withAlpha } from "@/theme/palette.ts";
 import type { ColorMap } from "@/theme/types.ts";
 
-export const tabColors = ({ accent, surfaces }: ThemeModel): ColorMap => ({
-  "editorGroupHeader.tabsBackground": surfaces.chrome1,
-  "editorGroupHeader.noTabsBackground": surfaces.chrome1,
-  "editorGroupHeader.tabsBorder": surfaces.line,
-  "editorGroup.border": surfaces.line,
-  "editorGroup.dropBackground": withAlpha(surfaces.inverse, surfaces.isDark ? 0.05 : 0.08),
-  "tab.activeBackground": surfaces.editor,
-  "tab.activeBorderTop": accent.border,
-  "tab.activeBorder": transparent(),
-  "tab.activeForeground": surfaces.fg,
-  "tab.inactiveBackground": surfaces.chrome1,
-  "tab.inactiveForeground": surfaces.muted,
-  "tab.unfocusedActiveBackground": surfaces.editor,
-  "tab.unfocusedActiveForeground": surfaces.muted,
-  "tab.unfocusedInactiveForeground": surfaces.subtle,
-  "tab.border": surfaces.chrome1,
-  "tab.hoverBackground": surfaces.chrome3,
-  "tab.hoverForeground": surfaces.fg,
-});
+export const tabColors = (model: ThemeModel): ColorMap => {
+  const { accent, surfaces } = model;
+  return {
+    "editorGroupHeader.tabsBackground": surfaces.chrome1,
+    "editorGroupHeader.noTabsBackground": surfaces.chrome1,
+    "editorGroupHeader.tabsBorder": surfaces.line,
+    // Split editors share the page color, so their divider must stay visible.
+    "editorGroup.border": separatorColor(model),
+    "editorGroup.dropBackground": withAlpha(surfaces.inverse, surfaces.isDark ? 0.05 : 0.08),
+    "tab.activeBackground": surfaces.editor,
+    "tab.activeBorderTop": accent.border,
+    "tab.activeBorder": transparent(),
+    "tab.activeForeground": surfaces.fg,
+    "tab.inactiveBackground": surfaces.chrome1,
+    "tab.inactiveForeground": surfaces.muted,
+    "tab.unfocusedActiveBackground": surfaces.editor,
+    "tab.unfocusedActiveForeground": surfaces.muted,
+    "tab.unfocusedInactiveForeground": surfaces.subtle,
+    "tab.border": surfaces.chrome1,
+    "tab.hoverBackground": surfaces.chrome3,
+    "tab.hoverForeground": surfaces.fg,
+  };
+};
 
 export const activityBarColors = ({ accent, surfaces }: ThemeModel): ColorMap => ({
   "activityBar.background": surfaces.chrome0,

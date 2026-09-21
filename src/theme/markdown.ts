@@ -257,6 +257,12 @@ export const markdownColors = (model: ThemeModel): ColorMap => {
   );
 };
 
+/**
+ * A quiet separator that stays visible on every shade, following the border intensity setting with a
+ * contrast floor. Markdown rules and the line between split editors share it.
+ */
+export const separatorColor = (model: ThemeModel): string => markdownPalette(model).rule("line");
+
 /** Workbench text colors, derived from the same roles so every Markdown surface agrees. */
 export const markdownTextColors = (model: ThemeModel): ColorMap => {
   const { accent, uiSyntax, readable, backgrounds, rule } = markdownPalette(model);

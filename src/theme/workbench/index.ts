@@ -72,6 +72,12 @@ const withBorderIntensity = (colors: ColorMap, opacity: number): ColorMap => {
 
 const isBorderColorKey = (key: string): boolean => /border|outline/i.test(key);
 
-/** Keys that follow their own rules: window frames, and quote bars, which are content rather than chrome. */
+/**
+ * Keys that follow their own rules: window frames, quote bars (content rather than chrome), and the
+ * split-editor divider, whose color already follows the border setting with a visibility floor.
+ */
 const isWindowFrameBorderKey = (key: string): boolean =>
-  key === "window.activeBorder" || key === "window.inactiveBorder" || key === "textBlockQuote.border";
+  key === "window.activeBorder" ||
+  key === "window.inactiveBorder" ||
+  key === "textBlockQuote.border" ||
+  key === "editorGroup.border";

@@ -130,6 +130,28 @@ describe("Umbre Markdown colors", () => {
     }
   });
 
+  test("the split-editor divider stays visible on every shade and border level", () => {
+    for (const mode of modes) {
+      for (const shade of shadeVariants) {
+        for (const borders of borderVariants) {
+          const themeModel = createThemeModel({
+            mode,
+            shade,
+            accentFamily: "amber",
+            dim: defaultDimming,
+            panels: defaultPanels,
+            terminal: defaultTerminal,
+            borders,
+            syntaxVariant: syntaxVariants[0],
+          });
+          const divider = workbenchColors(themeModel)["editorGroup.border"] ?? "";
+          const label = `${mode} ${shade.id} ${borders.id}`;
+          expect(wcagContrast(divider, themeModel.surfaces.editor), label).toBeGreaterThanOrEqual(1.3);
+        }
+      }
+    }
+  });
+
   test("diagram strokes stay visible on every shade", () => {
     for (const mode of modes) {
       for (const shade of shadeVariants) {
