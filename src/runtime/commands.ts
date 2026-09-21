@@ -2,6 +2,7 @@ import { commandIds, product } from "@/product.ts";
 import { isUmbreThemeConfigured } from "@/runtime/active-theme.ts";
 import { setAppearanceSyncSuspended } from "@/runtime/appearance-sync.ts";
 import { applySettings } from "@/runtime/apply.ts";
+import { recommendExtension } from "@/runtime/extension-recommendation.ts";
 import { chooseRecommendedFont } from "@/runtime/fonts.ts";
 import { suggestSymbolsIconTheme } from "@/runtime/icon-theme-recommendation.ts";
 import { oppositeSettings } from "@/runtime/opposite-settings.ts";
@@ -36,6 +37,7 @@ const configureTheme = async (
   configuringTheme = true;
   let preview: Awaited<ReturnType<typeof createThemePreview>> | undefined;
   let previewFinished = false;
+  let applied = false;
 
   try {
     if (!(await ensureActiveUmbreTheme())) return;
@@ -56,11 +58,24 @@ const configureTheme = async (
     await updateSettings(picked);
     const label = await applySettings(picked);
     await showAppliedMessage(label, wasActiveTheme);
-    await suggestSymbolsIconTheme();
+    applied = true;
   } finally {
     if (preview && !previewFinished) await preview.cancel();
     setAppearanceSyncSuspended(false);
     configuringTheme = false;
+  }
+
+  // Optional follow-ups wait on the user, so they run after the theme is fully applied and unlocked.
+  if (applied) await suggestRecommendedExtensions(context);
+};
+
+const suggestRecommendedExtensions = async (context: vscode.ExtensionContext): Promise<void> => {
+  try {
+    await suggestSymbolsIconTheme(context);
+    await recommendExtension(context, product.recommendedExtensions.githubMarkdownPreview);
+    await recommendExtension(context, product.recommendedExtensions.markdownHighlighting);
+  } catch {
+    // Recommendations are optional; a failed install or prompt must not affect the applied theme.
   }
 };
 
