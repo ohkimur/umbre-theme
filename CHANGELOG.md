@@ -1,3 +1,9 @@
+## 0.5.2 (2026-09-21)
+
+### Bug Fixes
+
+- **markdown:** center diagrams on the reading column ([39f40db](https://github.com/ohkimur/umbre-theme/commit/39f40db0d16f775f2ae44bf48d693b670d1c7a0e))
+
 ## 0.5.1 (2026-09-21)
 
 ### Bug Fixes
