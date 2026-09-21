@@ -32,6 +32,8 @@ export const recommendExtension = async (
   const state = await extensionState(context, recommendation.checkId ?? recommendation.id);
   if (state === "enabled") return "enabled";
   if (dismissedThisSession.has(recommendation.id)) return "declined";
+  // Claimed before prompting, so overlapping calls offer each extension once per session.
+  dismissedThisSession.add(recommendation.id);
 
   const { id, name, pitch } = recommendation;
   const checkId = recommendation.checkId ?? id;
@@ -47,8 +49,6 @@ export const recommendExtension = async (
         : [pairing, `Show ${name}`];
 
   const choice = await vscode.window.showInformationMessage(message, action, dismissAction);
-  // Any answer, including closing the notification, counts: each extension is offered once per session.
-  dismissedThisSession.add(id);
   if (choice !== action) return "declined";
 
   if (state === "missing") {

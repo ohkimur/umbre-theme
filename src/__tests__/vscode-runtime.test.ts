@@ -247,6 +247,16 @@ describe("Umbre extension recommendations", () => {
     expect(informationMessages).toHaveLength(1);
   });
 
+  test("asks once when setups overlap", async () => {
+    informationChoices = ["Not now", "Not now"];
+    await Promise.all([
+      recommendExtension(context, markdownPreview),
+      recommendExtension(context, markdownPreview),
+    ]);
+
+    expect(informationMessages).toHaveLength(1);
+  });
+
   for (const [label, setup] of [
     ["remote windows", () => (remoteName = "ssh-remote")],
     ["non-default profiles", () => (profilePath = "/User/profiles/abc/globalStorage/ohkimur.umbre-theme")],
