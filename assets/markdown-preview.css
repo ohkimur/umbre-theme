@@ -21,11 +21,18 @@
   line-height: 1.65;
 }
 
-/* Roughly 80 characters per line, scaling with the Markdown font size. */
+/*
+ * Measure: the page frame leaves room for tables, code, and diagrams, while running text keeps
+ * roughly 80 characters per line. Both scale with the Markdown font size and share a left edge.
+ */
 :root body[data-vscode-theme-id="Umbre"].vscode-body:not(:has(.github-markdown-body)),
 :root body[data-vscode-theme-id="Umbre"] .github-markdown-content {
-  max-width: 46em;
+  max-width: 60em;
   margin-inline: auto;
+}
+
+:root body[data-vscode-theme-id="Umbre"] :is(p, ul, ol, dl, blockquote, .markdown-alert, .footnotes) {
+  max-width: 46em;
 }
 
 /* GitHub Markdown Preview: same reading size, font and point its palette at Umbre's. */
@@ -355,21 +362,26 @@
 }
 
 /*
- * Tables: a soft outline and header band, roomy cells, and subtle row and column lines. Columns size and wrap
- * naturally, and alignment from the Markdown source (inline styles) wins.
+ * Tables: a soft outline and header band, roomy cells, and subtle row and column lines. Columns size
+ * naturally within the page frame, and alignment from the Markdown source (inline styles) wins.
  */
 
 :root body[data-vscode-theme-id="Umbre"] table {
-  /* GitHub Markdown Preview forces block, max-content tables; return to natural table layout. */
-  display: table;
-  width: auto;
+  /* As wide as the content needs within the page frame; a table wider still scrolls sideways. */
+  display: block;
+  width: fit-content;
   max-width: 100%;
+  overflow-x: auto;
   border-collapse: separate;
   border-spacing: 0;
   border: 1px solid var(--vscode-umbreMarkdown-tableRule);
   border-radius: 8px;
-  overflow: hidden;
   font-variant-numeric: tabular-nums;
+}
+
+/* Code in cells stays on one line, so expressions never break mid-token. */
+:root body[data-vscode-theme-id="Umbre"] table code {
+  white-space: nowrap;
 }
 
 :root body[data-vscode-theme-id="Umbre"] table :is(th, td) {
