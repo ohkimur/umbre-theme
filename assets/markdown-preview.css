@@ -22,17 +22,34 @@
 }
 
 /*
- * Measure: the page frame leaves room for tables, code, and diagrams, while running text keeps
- * roughly 80 characters per line. Both scale with the Markdown font size and share a left edge.
+ * Measure: text keeps roughly 80 characters per line in a column centered in a wider page frame.
+ * Diagrams use the whole frame and VS Code centers them, so they share the text's center;
+ * tables start on the text's left edge and may grow into the frame. All scale with the font size.
  */
 :root body[data-vscode-theme-id="Umbre"].vscode-body:not(:has(.github-markdown-body)),
 :root body[data-vscode-theme-id="Umbre"] .github-markdown-content {
+  --umbre-inset: max(0px, (100% - var(--umbre-text) * 46) / 2);
   max-width: 60em;
   margin-inline: auto;
 }
 
-:root body[data-vscode-theme-id="Umbre"] :is(p, ul, ol, dl, blockquote, .markdown-alert, .footnotes) {
-  max-width: 46em;
+:root body[data-vscode-theme-id="Umbre"].vscode-body:not(:has(.github-markdown-body)) .markdown-body > *,
+:root body[data-vscode-theme-id="Umbre"] .github-markdown-content > * {
+  margin-inline: var(--umbre-inset);
+}
+
+:root body[data-vscode-theme-id="Umbre"].vscode-body:not(:has(.github-markdown-body)) .markdown-body > table,
+:root body[data-vscode-theme-id="Umbre"] .github-markdown-content > table {
+  margin-right: 0;
+  max-width: calc(100% - var(--umbre-inset));
+}
+
+:root
+  body[data-vscode-theme-id="Umbre"].vscode-body:not(:has(.github-markdown-body))
+  .markdown-body
+  > .mermaid-wrapper,
+:root body[data-vscode-theme-id="Umbre"] .github-markdown-content > .mermaid-wrapper {
+  margin-inline: 0;
 }
 
 /* GitHub Markdown Preview: same reading size, font and point its palette at Umbre's. */
@@ -81,7 +98,7 @@
 /* Headings: the Markdown editor's scale, lots of room above and a steady gap to the content they lead. */
 
 :root body[data-vscode-theme-id="Umbre"] :is(h1, h2, h3, h4, h5, h6) {
-  margin: calc(var(--umbre-space) * 2.4) 0 var(--umbre-space);
+  margin-block: calc(var(--umbre-space) * 2.4) var(--umbre-space);
   color: var(--vscode-umbreMarkdown-heading);
   font-weight: 600;
   line-height: 1.3;
@@ -126,13 +143,13 @@
  */
 
 :root body[data-vscode-theme-id="Umbre"] :is(p, ul, ol, dl) {
-  margin: 0 0 calc(var(--umbre-space) * 1.1);
+  margin-block: 0 calc(var(--umbre-space) * 1.1);
 }
 
 :root
   body[data-vscode-theme-id="Umbre"]
   :is(table, pre, blockquote, details, .markdown-alert, .mermaid-wrapper) {
-  margin: calc(var(--umbre-space) * 1.6) 0;
+  margin-block: calc(var(--umbre-space) * 1.6);
 }
 
 :root
@@ -165,7 +182,7 @@
 
 :root body[data-vscode-theme-id="Umbre"] hr {
   height: 1px;
-  margin: calc(var(--umbre-space) * 2.4) 0;
+  margin-block: calc(var(--umbre-space) * 2.4);
   border: 0;
   background-color: var(--vscode-textSeparator-foreground);
 }
