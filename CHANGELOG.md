@@ -1,3 +1,9 @@
+## 0.5.1 (2026-09-21)
+
+### Bug Fixes
+
+- **runtime:** suggest Symbols when the icon setting names it but it is missing ([da2b535](https://github.com/ohkimur/umbre-theme/commit/da2b535a622c03303027841613953cc05f5ae0ee))
+
 ## 0.5.0 (2026-09-21)
 
 ### Features
