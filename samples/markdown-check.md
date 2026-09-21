@@ -1261,32 +1261,32 @@ https://example.com/verylongunbrokensegmentverylongunbrokensegmentverylongunbrok
 
 Same diagram, same colors; only layout settings differ. Compare line flow, spacing, and how labels breathe.
 
-### A — current: straight lines, tight spacing
+### A — straight lines, tight spacing
 
 ```mermaid
 %%{init: {"flowchart": {"curve": "linear", "nodeSpacing": 32, "rankSpacing": 40}}}%%
 flowchart TB
-  Data["External model or recorded data"] --> Source["Source adapter"]
-  Source -->|"Snapshots"| View
-  Definition["View definition"] -->|"Binding and options"| View
-  subgraph View["React View"]
-    Binding["Source subscription"] --> Renderer["Renderer"]
+  Input["Incoming request"] --> Parser["Parser"]
+  Parser -->|"Tokens"| Engine
+  Config["Configuration"] -->|"Rules and options"| Engine
+  subgraph Engine["Processing engine"]
+    Validate["Validation"] --> Transform["Transform"]
   end
-  View --> Document["Document"]
-  View --> Workspace["Workspace"]
-  Document --> Consumer["External document host"]
-  Workspace --> Prism["Prism or workspace embed"]
-  style View fill:#101827,stroke:#60a5fa,color:#dbeafe
+  Engine --> Report["Report"]
+  Engine --> Cache["Cache"]
+  Report --> Reader["External reader"]
+  Cache --> Store["Storage backend"]
+  style Engine fill:#101827,stroke:#60a5fa,color:#dbeafe
   classDef external fill:#18181b,stroke:#71717a,color:#f4f4f5
-  classDef host fill:#052e16,stroke:#4ade80,color:#dcfce7
-  classDef view fill:#172554,stroke:#60a5fa,color:#dbeafe
-  classDef core fill:#2e1065,stroke:#c084fc,color:#f3e8ff
-  classDef source fill:#422006,stroke:#fbbf24,color:#fef3c7
-  class Data,Consumer external
-  class Source source
-  class Definition core
-  class Binding,Renderer view
-  class Document,Workspace,Prism host
+  classDef output fill:#052e16,stroke:#4ade80,color:#dcfce7
+  classDef step fill:#172554,stroke:#60a5fa,color:#dbeafe
+  classDef config fill:#2e1065,stroke:#c084fc,color:#f3e8ff
+  classDef input fill:#422006,stroke:#fbbf24,color:#fef3c7
+  class Input,Reader external
+  class Parser input
+  class Config config
+  class Validate,Transform step
+  class Report,Cache,Store output
 ```
 
 ### B — curved connectors, more room
@@ -1294,27 +1294,27 @@ flowchart TB
 ```mermaid
 %%{init: {"flowchart": {"curve": "basis", "nodeSpacing": 56, "rankSpacing": 64, "padding": 16}}}%%
 flowchart TB
-  Data["External model or recorded data"] --> Source["Source adapter"]
-  Source -->|"Snapshots"| View
-  Definition["View definition"] -->|"Binding and options"| View
-  subgraph View["React View"]
-    Binding["Source subscription"] --> Renderer["Renderer"]
+  Input["Incoming request"] --> Parser["Parser"]
+  Parser -->|"Tokens"| Engine
+  Config["Configuration"] -->|"Rules and options"| Engine
+  subgraph Engine["Processing engine"]
+    Validate["Validation"] --> Transform["Transform"]
   end
-  View --> Document["Document"]
-  View --> Workspace["Workspace"]
-  Document --> Consumer["External document host"]
-  Workspace --> Prism["Prism or workspace embed"]
-  style View fill:#101827,stroke:#60a5fa,color:#dbeafe
+  Engine --> Report["Report"]
+  Engine --> Cache["Cache"]
+  Report --> Reader["External reader"]
+  Cache --> Store["Storage backend"]
+  style Engine fill:#101827,stroke:#60a5fa,color:#dbeafe
   classDef external fill:#18181b,stroke:#71717a,color:#f4f4f5
-  classDef host fill:#052e16,stroke:#4ade80,color:#dcfce7
-  classDef view fill:#172554,stroke:#60a5fa,color:#dbeafe
-  classDef core fill:#2e1065,stroke:#c084fc,color:#f3e8ff
-  classDef source fill:#422006,stroke:#fbbf24,color:#fef3c7
-  class Data,Consumer external
-  class Source source
-  class Definition core
-  class Binding,Renderer view
-  class Document,Workspace,Prism host
+  classDef output fill:#052e16,stroke:#4ade80,color:#dcfce7
+  classDef step fill:#172554,stroke:#60a5fa,color:#dbeafe
+  classDef config fill:#2e1065,stroke:#c084fc,color:#f3e8ff
+  classDef input fill:#422006,stroke:#fbbf24,color:#fef3c7
+  class Input,Reader external
+  class Parser input
+  class Config config
+  class Validate,Transform step
+  class Report,Cache,Store output
 ```
 
 ### C — ELK layout, curved connectors, more room
@@ -1322,25 +1322,25 @@ flowchart TB
 ```mermaid
 %%{init: {"layout": "elk", "flowchart": {"curve": "basis", "nodeSpacing": 56, "rankSpacing": 64, "padding": 16}}}%%
 flowchart TB
-  Data["External model or recorded data"] --> Source["Source adapter"]
-  Source -->|"Snapshots"| View
-  Definition["View definition"] -->|"Binding and options"| View
-  subgraph View["React View"]
-    Binding["Source subscription"] --> Renderer["Renderer"]
+  Input["Incoming request"] --> Parser["Parser"]
+  Parser -->|"Tokens"| Engine
+  Config["Configuration"] -->|"Rules and options"| Engine
+  subgraph Engine["Processing engine"]
+    Validate["Validation"] --> Transform["Transform"]
   end
-  View --> Document["Document"]
-  View --> Workspace["Workspace"]
-  Document --> Consumer["External document host"]
-  Workspace --> Prism["Prism or workspace embed"]
-  style View fill:#101827,stroke:#60a5fa,color:#dbeafe
+  Engine --> Report["Report"]
+  Engine --> Cache["Cache"]
+  Report --> Reader["External reader"]
+  Cache --> Store["Storage backend"]
+  style Engine fill:#101827,stroke:#60a5fa,color:#dbeafe
   classDef external fill:#18181b,stroke:#71717a,color:#f4f4f5
-  classDef host fill:#052e16,stroke:#4ade80,color:#dcfce7
-  classDef view fill:#172554,stroke:#60a5fa,color:#dbeafe
-  classDef core fill:#2e1065,stroke:#c084fc,color:#f3e8ff
-  classDef source fill:#422006,stroke:#fbbf24,color:#fef3c7
-  class Data,Consumer external
-  class Source source
-  class Definition core
-  class Binding,Renderer view
-  class Document,Workspace,Prism host
+  classDef output fill:#052e16,stroke:#4ade80,color:#dcfce7
+  classDef step fill:#172554,stroke:#60a5fa,color:#dbeafe
+  classDef config fill:#2e1065,stroke:#c084fc,color:#f3e8ff
+  classDef input fill:#422006,stroke:#fbbf24,color:#fef3c7
+  class Input,Reader external
+  class Parser input
+  class Config config
+  class Validate,Transform step
+  class Report,Cache,Store output
 ```
