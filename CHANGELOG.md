@@ -1,3 +1,18 @@
+## 0.5.0 (2026-09-21)
+
+### Features
+
+- **markdown:** style Markdown in Umbre's colors across previews and editor ([e293530](https://github.com/ohkimur/umbre-theme/commit/e2935305efe46aa822fe59f9d5ef7f476b5c8e7c))
+- **runtime:** recommend companion extensions through a shared helper ([125ef76](https://github.com/ohkimur/umbre-theme/commit/125ef760bfc714c3efb420c888fae7365e746a49))
+
+### Bug Fixes
+
+- **markdown:** give tables room beyond the text measure ([82af626](https://github.com/ohkimur/umbre-theme/commit/82af6265a76b3d9e857646d1f0a549e6b360a83f))
+- **markdown:** highlight Mermaid inside quoted fences ([67535a4](https://github.com/ohkimur/umbre-theme/commit/67535a4d1f5dcf51b8fbc761db428a4fb52fd35a))
+- **runtime:** offer each recommendation once when setups overlap ([9900a96](https://github.com/ohkimur/umbre-theme/commit/9900a9651b62a73409bc78c7241b55a416e1b02c))
+- **runtime:** stop recommending Markdown Preview VS Code Highlighting ([a86520c](https://github.com/ohkimur/umbre-theme/commit/a86520c526d8fae69d05238d94dcf2cbb9e1dd13))
+- **theme:** keep the split editor divider visible ([a65fc58](https://github.com/ohkimur/umbre-theme/commit/a65fc5867832854731f3cb35c36549c65ceac7e8))
+
 ## 0.4.1 (2026-06-09)
 
 ### Bug Fixes
