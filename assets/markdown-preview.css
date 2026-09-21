@@ -22,34 +22,26 @@
 }
 
 /*
- * Measure: text keeps roughly 80 characters per line in a column centered in a wider page frame.
- * Diagrams use the whole frame and VS Code centers them, so they share the text's center;
- * tables start on the text's left edge and may grow into the frame. All scale with the font size.
+ * Measure: the same box as VS Code's Markdown editor, a centered 900px column padded 48px before
+ * and 86px after (room for its read-only toggle), so text, tables, code and diagrams sit on the
+ * same edges as in the editor at every pane width. GitHub's preview pads its content with
+ * !important, so the padding needs it too.
  */
+/* The page and GitHub's wrapper add their own side padding and border; the column provides it. */
+:root:has(> body[data-vscode-theme-id="Umbre"]) {
+  padding-inline: 0;
+}
+
+:root body[data-vscode-theme-id="Umbre"] .github-markdown-body {
+  border-inline-width: 0;
+}
+
 :root body[data-vscode-theme-id="Umbre"].vscode-body:not(:has(.github-markdown-body)),
 :root body[data-vscode-theme-id="Umbre"] .github-markdown-content {
-  --umbre-inset: max(0px, (100% - var(--umbre-text) * 46) / 2);
-  max-width: 60em;
+  box-sizing: content-box;
+  max-width: 900px;
   margin-inline: auto;
-}
-
-:root body[data-vscode-theme-id="Umbre"].vscode-body:not(:has(.github-markdown-body)) .markdown-body > *,
-:root body[data-vscode-theme-id="Umbre"] .github-markdown-content > * {
-  margin-inline: var(--umbre-inset);
-}
-
-:root body[data-vscode-theme-id="Umbre"].vscode-body:not(:has(.github-markdown-body)) .markdown-body > table,
-:root body[data-vscode-theme-id="Umbre"] .github-markdown-content > table {
-  margin-right: 0;
-  max-width: calc(100% - var(--umbre-inset));
-}
-
-:root
-  body[data-vscode-theme-id="Umbre"].vscode-body:not(:has(.github-markdown-body))
-  .markdown-body
-  > .mermaid-wrapper,
-:root body[data-vscode-theme-id="Umbre"] .github-markdown-content > .mermaid-wrapper {
-  margin-inline: 0;
+  padding-inline: 48px 86px !important;
 }
 
 /* GitHub Markdown Preview: same reading size, font and point its palette at Umbre's. */
@@ -380,11 +372,11 @@
 
 /*
  * Tables: a soft outline and header band, roomy cells, and subtle row and column lines. Columns size
- * naturally within the page frame, and alignment from the Markdown source (inline styles) wins.
+ * naturally within the column, and alignment from the Markdown source (inline styles) wins.
  */
 
 :root body[data-vscode-theme-id="Umbre"] table {
-  /* As wide as the content needs within the page frame; a table wider still scrolls sideways. */
+  /* As wide as the content needs within the column; a table wider still scrolls sideways. */
   display: block;
   width: fit-content;
   max-width: 100%;
@@ -530,6 +522,21 @@
 }
 
 /* Mermaid diagrams render natively: VS Code's Mermaid theme reads Umbre's workbench colors. */
+
+/*
+ * The viewer centers diagrams from its wrapper's border box, so its 1px hover frame shifts them.
+ * An inset outline draws the same frame without taking up space.
+ */
+:root body[data-vscode-theme-id="Umbre"] .mermaid-wrapper {
+  border-width: 0;
+  outline: 1px solid transparent;
+  outline-offset: -1px;
+  transition: outline-color 0.2s ease-in-out;
+}
+
+:root body[data-vscode-theme-id="Umbre"] .mermaid-wrapper:is(:hover, :focus, :focus-within) {
+  outline-color: var(--vscode-editorWidget-border);
+}
 
 /* Mermaid sizes boxes for VS Code's UI font, so diagrams keep it rather than the larger reading size. */
 :root body[data-vscode-theme-id="Umbre"] :is(.mermaid, .mermaid-wrapper) {

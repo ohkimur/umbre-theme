@@ -187,9 +187,12 @@ describe("Umbre Markdown colors", () => {
       .split("}")
       .map((block) => block.split("{")[0]?.trim() ?? "")
       .filter(Boolean);
+    // The page root itself is scoped through the Umbre body it contains.
+    const scope =
+      /^:root(?::has\(> body\[data-vscode-theme-id="Umbre"\]\)| body\[data-vscode-theme-id="Umbre"\])/;
     for (const selector of selectors) {
       for (const part of selector.split(/,\s*(?![^(]*\))/)) {
-        expect(part.replace(/\s+/g, " ")).toStartWith(':root body[data-vscode-theme-id="Umbre"]');
+        expect(part.replace(/\s+/g, " ")).toMatch(scope);
       }
     }
   });
