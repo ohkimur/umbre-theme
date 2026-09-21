@@ -302,6 +302,15 @@ Look for nesting, spacing, alignment, code token parity, and readable diagram re
 >
 > > Nested quote inside caution.
 
+> Quoted Mermaid: source highlighting must match a top-level fence.
+>
+> ```mermaid
+> flowchart TD
+>   A[Quoted start] --> B{Decision}
+>   B -->|yes| C[Done]
+>   style C stroke-width:2px
+> ```
+
 ## Tables — alignment, single header band, stripes, overflow
 | Left | Center | Right | Default |
 | :--- | :---: | ---: | --- |
@@ -434,6 +443,18 @@ packages/
 └── tests/
     └── sample.test.ts
 TREE
+```
+
+### Standalone tree listing
+```text
+workspace/
+├── src/            # source
+│   ├── index.ts
+│   └── utils/
+│       └── format.ts
+├── docs/
+│   └── guide.md
+└── package.json
 ```
 
 ### Python
