@@ -68,9 +68,9 @@
   "lint-staged": {
     "*.{cjs,js,jsx,mjs,ts,tsx}": [
       "oxlint --fix --no-error-on-unmatched-pattern",
-      "oxfmt --write"
+      "oxfmt --write --no-error-on-unmatched-pattern"
     ],
-    "*.{css,json,jsonc,md,mdx,yaml,yml}": "oxfmt --write"
+    "*.{css,json,jsonc,md,mdx,yaml,yml}": "oxfmt --write --no-error-on-unmatched-pattern"
   },
   "packageManager": "bun@1.3.14"
 }
