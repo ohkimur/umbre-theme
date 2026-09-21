@@ -73,7 +73,6 @@ const suggestRecommendedExtensions = async (context: vscode.ExtensionContext): P
   try {
     await suggestSymbolsIconTheme(context);
     await recommendExtension(context, product.recommendedExtensions.githubMarkdownPreview);
-    await recommendExtension(context, product.recommendedExtensions.markdownHighlighting);
   } catch {
     // Recommendations are optional; a failed install or prompt must not affect the applied theme.
   }

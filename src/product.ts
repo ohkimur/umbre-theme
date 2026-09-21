@@ -18,12 +18,6 @@ export const product = {
       pitch: "GitHub-style Markdown previews in your palette",
       url: "https://marketplace.visualstudio.com/items?itemName=bierner.github-markdown-preview",
     },
-    markdownHighlighting: {
-      id: "bierner.markdown-shiki",
-      name: "Markdown Preview VS Code Highlighting",
-      pitch: "which colors preview code blocks exactly like the editor",
-      url: "https://marketplace.visualstudio.com/items?itemName=bierner.markdown-shiki",
-    },
   },
   commands: {
     configure: {

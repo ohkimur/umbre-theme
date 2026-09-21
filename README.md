@@ -81,6 +81,5 @@ These extensions work well with Umbre. All are optional.
 
 - [Symbols](https://marketplace.visualstudio.com/items?itemName=miguelsolorio.symbols) — simple file icons.
 - [GitHub Markdown Preview](https://marketplace.visualstudio.com/items?itemName=bierner.github-markdown-preview) — GitHub-style Markdown, in Umbre's colors.
-- [Markdown Preview VS Code Highlighting](https://marketplace.visualstudio.com/items?itemName=bierner.markdown-shiki) — code in the preview looks exactly like the editor.
 
 After setup, Umbre offers to install any you don't have, or to enable any you've turned off.
