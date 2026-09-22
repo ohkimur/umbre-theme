@@ -203,6 +203,9 @@
 }
 
 :root body[data-vscode-theme-id="Umbre"] :not(pre) > code {
+  /* Each wrapped piece keeps its own padding and rounded background. */
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
   padding: 0.1em 0.35em;
   color: var(--vscode-textPreformat-foreground);
   background-color: var(--vscode-textPreformat-background);
@@ -388,9 +391,14 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Code in cells stays on one line, so expressions never break mid-token. */
+/*
+ * Code in cells wraps where text does (at spaces and hyphens), as in the Markdown editor: a long call
+ * breaks after a comma instead of widening its column, and an identifier never breaks mid-word.
+ */
 :root body[data-vscode-theme-id="Umbre"] table code {
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: normal;
+  word-break: normal;
 }
 
 :root body[data-vscode-theme-id="Umbre"] table :is(th, td) {
