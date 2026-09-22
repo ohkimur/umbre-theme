@@ -1,9 +1,11 @@
-import { umbreFileTrees, type MarkdownIt } from "@/markdown/file-tree.ts";
+import { umbreDiffMarkers, type MarkdownItWithCore } from "@/markdown/diff-markers.ts";
+import { umbreFileTrees } from "@/markdown/file-tree.ts";
 import { isUmbreThemeActive } from "@/runtime/active-theme.ts";
 import * as vscode from "vscode";
 
 /** Called by VS Code's Markdown extension through `markdown.markdownItPlugins`. */
-export const extendMarkdownIt = (md: MarkdownIt): MarkdownIt => umbreFileTrees(md, isUmbreThemeActive);
+export const extendMarkdownIt = (md: MarkdownItWithCore): MarkdownItWithCore =>
+  umbreDiffMarkers(umbreFileTrees(md, isUmbreThemeActive), isUmbreThemeActive);
 
 /**
  * Markdown previews repaint most colors live, but Mermaid bakes the theme into each diagram when it

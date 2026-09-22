@@ -74,6 +74,7 @@ Markdown previews and the Markdown editor share Umbre's colors. A few renderer d
 - **Easy reading** — clear headings, calm text, and tables with visible lines.
 - **Mermaid** — diagram code is highlighted too.
 - **Folder trees** — `├──` listings get quiet guides, colored folders, and muted comments in the preview.
+- **Clean diffs** — rendered Markdown diffs highlight what changed, even inside code and folder trees.
 
 ## Nice pairing
 

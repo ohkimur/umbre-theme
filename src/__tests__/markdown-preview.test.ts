@@ -15,7 +15,8 @@ import {
   type ShadeVariant,
   type SyntaxVariant,
 } from "@/config.ts";
-import { highlightFileTree, isFileTree } from "@/markdown/file-tree.ts";
+import { insertDiffMarkers, umbreDiffMarkers, type MarkdownItWithCore } from "@/markdown/diff-markers.ts";
+import { highlightFileTree, isFileTree, umbreFileTrees } from "@/markdown/file-tree.ts";
 import {
   markdownColorContributions,
   markdownColorId,
@@ -25,6 +26,7 @@ import {
 import { createThemeModel } from "@/theme/model.ts";
 import { workbenchColors } from "@/theme/workbench/index.ts";
 import { wcagContrast } from "culori";
+import MarkdownIt from "markdown-it";
 
 const model = (
   syntaxVariant: SyntaxVariant = syntaxVariants[0],
@@ -216,5 +218,166 @@ describe("Umbre directory trees", () => {
     expect(html).toContain('<span class="umbre-tree-folder">prism/</span>');
     expect(html).toContain('<span class="umbre-tree-file">README.md</span>');
     expect(html).toContain('<span class="umbre-tree-comment"># 🟩 workspace application</span>');
+  });
+});
+
+describe("Umbre Markdown diff markers", () => {
+  const start = (id: number): string => `<span data-diff-start="${id}"></span>`;
+  const end = (id: number): string => `<span data-diff-end="${id}"></span>`;
+  const render = (source: string, active = true, env: object = {}, replaceTokens = false): string => {
+    const plain = new MarkdownIt({ html: true });
+    // Like the footnote plugin, which hands back a new token list at the end of parsing.
+    if (replaceTokens)
+      plain.core.ruler.push("replace_tokens", (state) => void (state.tokens = [...state.tokens]));
+    const md = plain as unknown as MarkdownItWithCore;
+    const isActive = (): boolean => active;
+    return (umbreDiffMarkers(umbreFileTrees(md, isActive), isActive) as unknown as MarkdownIt).render(
+      source,
+      env,
+    );
+  };
+
+  test("keeps changes in a tree listing as markers, not text", () => {
+    const html = render(
+      ["```text", "src/", `├── a.ts`, `${start(1)}│   └── placement/${end(1)}`, "└── b.ts", "```"].join("\n"),
+    );
+    expect(html).not.toContain("&lt;span");
+    expect(html).toContain('class="umbre-tree-folder"');
+    expect(html).toContain(
+      `<span class="umbre-tree-guide">${start(1)}│   └── </span><span class="umbre-tree-folder">placement/</span>${end(1)}`,
+    );
+    expect(html).toContain(start(1));
+    expect(html).toContain(end(1));
+  });
+
+  test("keeps changes in highlighted code and inline code as markers", () => {
+    const html = render(
+      [
+        "```ts",
+        `const ${start(0)}value${end(0)} = 1;`,
+        "```",
+        "",
+        `Use \`${start(2)}a<b${end(2)}\` here.`,
+      ].join("\n"),
+    );
+    expect(html).not.toContain("&lt;span");
+    expect(html).toContain(`const ${start(0)}value${end(0)} = 1;`);
+    expect(html).toContain(`<code>${start(2)}a&lt;b${end(2)}</code>`);
+  });
+
+  test("never hides block syntax behind a marker", () => {
+    const html = render(
+      [
+        `${start(0)}## Title${end(0)}`,
+        "",
+        `${start(1)}\`\`\`ts${end(1)}`,
+        "let a = 1;",
+        `${start(2)}\`\`\`${end(2)}`,
+        "",
+        `${start(3)}- item${end(3)}`,
+      ].join("\n"),
+    );
+    expect(html).toContain(`<h2>${start(0)}Title${end(0)}</h2>`);
+    expect(html).toContain('<pre><code class="language-ts">let a = 1;');
+    expect(html).toContain(`<li>${start(3)}item${end(3)}</li>`);
+  });
+
+  test("keeps quoted fences and syntax-like code lines intact", () => {
+    const html = render(
+      [
+        `> ${start(0)}\`\`\`ts${end(0)}`,
+        "> let a = 1;",
+        "> ```",
+        "",
+        "```text",
+        `${start(1)}---${end(1)}`,
+        "```",
+      ].join("\n"),
+    );
+    expect(html).toContain('<blockquote>\n<pre><code class="language-ts">let a = 1;');
+    expect(html).toContain(`<code class="language-text">${start(1)}---${end(1)}`);
+  });
+
+  test("follows Markdown's own block structure in lists and quotes", () => {
+    const listFence = render(["- ```text", `  ${start(0)}---${end(0)}`, "  ```"].join("\n"));
+    expect(listFence).toContain(`<code class="language-text">${start(0)}---${end(0)}`);
+
+    const afterQuote = render(["> ```", "> code", "", `${start(1)}### New${end(1)}`].join("\n"));
+    expect(afterQuote).toContain(`<h3>${start(1)}New${end(1)}</h3>`);
+  });
+
+  test("keeps working when a plugin replaces the token list", () => {
+    const html = render(["```ts", `const ${start(0)}a${end(0)} = 1;`, "```"].join("\n"), true, {}, true);
+    expect(html).toContain(`const ${start(0)}a${end(0)} = 1;`);
+  });
+
+  test("tells code from syntax by what the parser consumed", () => {
+    const unclosed = render(["```text", "line", `    ${start(0)}\`\`\`${end(0)}`].join("\n"));
+    expect(unclosed).toContain(`    ${start(0)}\`\`\`${end(0)}`);
+
+    const indented = render(["Text", "", `    ${start(1)}> new${end(1)}`].join("\n"));
+    expect(indented).toContain(`<pre><code>${start(1)}&gt; new${end(1)}`);
+  });
+
+  test("keeps table rows, links, headings, and inline code intact", () => {
+    const table = render(["| a | b |", "| --- | --- |", `${start(0)}| c | d |${end(0)}`].join("\n"));
+    expect(table).toContain(`<td>${start(0)}c</td>\n<td>d${end(0)}</td>`);
+
+    const link = render(`See [site](${start(1)}https://example.org${end(1)}).`);
+    expect(link).toContain('<a href="https://example.org">site</a>');
+    expect(link).not.toContain("](");
+
+    const heading = render(`## Title ${start(2)}new${end(2)} ##`);
+    expect(heading).toContain(`<h2>Title ${start(2)}new${end(2)}</h2>`);
+
+    const code = render(`Use \` ${start(3)}a${end(3)} \` here.`);
+    expect(code.replace(/<span data-diff-(?:start|end)="\d+"><\/span>/g, "")).toContain("<code>a</code>");
+  });
+
+  test("never breaks references that span blocks", () => {
+    const html = render(
+      [
+        `See [site][${start(0)}id${end(0)}].`,
+        "",
+        "```ts",
+        `const ${start(1)}a${end(1)} = 1;`,
+        "```",
+        "",
+        "[id]: https://example.org",
+      ].join("\n"),
+    );
+    expect(html).toContain('<a href="https://example.org">site</a>');
+    expect(html).toContain(`const ${start(1)}a${end(1)} = 1;`);
+  });
+
+  test("leaves ordinary previews untouched, even with marker-like text", () => {
+    const source = [
+      "Example:",
+      "",
+      `    ${start(9)}---${end(9)}`,
+      "",
+      "```html",
+      `${start(0)}\`\`\`${end(0)}`,
+      "```",
+    ].join("\n");
+    const document = { currentDocument: "file:///docs/example.md" };
+    expect(render(source, true, document)).toBe(render(source, false, document));
+  });
+
+  test("renders marker-like text an author wrote exactly as written outside a diff", () => {
+    const source = ["```html", `<p>${start(0)}Documented${end(0)}</p>`, "```"].join("\n");
+    const html = render(source, true, { currentDocument: "file:///docs/example.md" });
+    expect(html).toContain("&lt;span data-diff-start=&quot;0&quot;&gt;&lt;/span&gt;Documented");
+  });
+
+  test("leaves other themes' rendering alone", () => {
+    expect(render(["```ts", `const ${start(0)}a${end(0)} = 1;`, "```"].join("\n"), false)).toContain(
+      "&lt;span",
+    );
+  });
+
+  test("counts HTML entities as one character", () => {
+    expect(insertDiffMarkers("a&lt;b", [{ offset: 2, html: "|" }])).toBe("a&lt;|b");
+    expect(insertDiffMarkers("<b>ab</b>\n", [{ offset: 2, html: "|" }])).toBe("<b>ab</b>|\n");
   });
 });
