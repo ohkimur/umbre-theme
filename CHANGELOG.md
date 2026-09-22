@@ -1,3 +1,10 @@
+## 0.5.4 (2026-09-22)
+
+### Bug Fixes
+
+- **markdown:** highlight changes in Markdown diffs without breaking them ([42a330b](https://github.com/ohkimur/umbre-theme/commit/42a330bf31d30fd0e2378f874c885d7dc38d58cb))
+- **markdown:** wrap code in table cells like the Markdown editor ([ba71952](https://github.com/ohkimur/umbre-theme/commit/ba719525f453d90751b540f0f62299ffa3561df9))
+
 ## 0.5.3 (2026-09-21)
 
 ### Bug Fixes
